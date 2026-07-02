@@ -103,6 +103,7 @@ Siga a checklist em [docs/implementation-checklist.md](./docs/implementation-che
 ## Como rodar
 
 - instalar dependencias: `corepack pnpm install`
+- subir o banco: `docker compose up -d postgres`
 - popular o banco: `corepack pnpm --dir apps/api prisma:seed`
 - validar tudo: `npm run lint` e `npm run test`
 - iniciar frontend: `npm run dev:web`
