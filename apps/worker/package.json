@@ -1,0 +1,11 @@
+{
+  "name": "@pcs/worker",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"configure worker runtime later\"",
+    "start": "echo \"configure worker runtime later\"",
+    "build": "echo \"build worker later\"",
+    "lint": "echo \"lint worker later\"",
+    "test": "echo \"test worker later\""
+  }
+}
