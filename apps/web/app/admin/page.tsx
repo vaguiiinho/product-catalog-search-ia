@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getProducts, type Product } from "@/lib/products";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  description:
+    "Painel administrativo básico para criar produtos e inspecionar o catálogo recente.",
+};
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("pt-BR", {
@@ -78,7 +85,14 @@ export default async function AdminPage({
   searchParams: Promise<{ created?: string; error?: string }>;
 }) {
   const { created, error } = await searchParams;
-  const products = await getProducts();
+  let products: Product[] = [];
+  let loadError = "";
+
+  try {
+    products = await getProducts();
+  } catch {
+    loadError = "Nao foi possivel carregar o catalogo agora. Verifique se a API esta online.";
+  }
 
   return (
     <main className="page-shell">
@@ -135,7 +149,17 @@ export default async function AdminPage({
         </form>
       </section>
 
-      <AdminProductList products={products} />
+      {loadError ? (
+        <section className="admin-panel">
+          <div className="section-header">
+            <p className="eyebrow">Catalogo recente</p>
+            <h2>Catalogo indisponivel.</h2>
+          </div>
+          <p className="empty-state">{loadError}</p>
+        </section>
+      ) : (
+        <AdminProductList products={products} />
+      )}
     </main>
   );
 }

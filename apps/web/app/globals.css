@@ -180,6 +180,13 @@ input {
   color: var(--accent-strong);
 }
 
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 28px;
+}
+
 .detail-id {
   font-size: 0.86rem;
   color: var(--muted);
@@ -439,5 +446,10 @@ h1 {
 
   .admin-row-meta {
     justify-items: start;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+    gap: 10px;
   }
 }

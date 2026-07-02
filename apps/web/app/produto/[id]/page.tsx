@@ -1,6 +1,32 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductById } from "@/lib/product";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProductById(id);
+
+  if (!product) {
+    return {
+      title: "Produto nao encontrado",
+      description: "Detalhe do produto indisponivel no catalogo.",
+    };
+  }
+
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.description,
+    },
+  };
+}
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("pt-BR", {

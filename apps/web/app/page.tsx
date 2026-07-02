@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { getProducts } from "@/lib/products";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description:
+    "Catalogo público com busca textual, ranking heuristico e navegação para o painel administrativo.",
+};
 
 const features = [
   {
