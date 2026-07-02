@@ -37,6 +37,10 @@ export type IngestionDocument = {
   facets: Record<string, string[]>;
 };
 
+export type EmbeddedIngestionDocument = IngestionDocument & {
+  embedding: number[];
+};
+
 export type IngestionSummary = {
   sourceCount: number;
   documentCount: number;
@@ -97,6 +101,17 @@ export function buildIngestionDocuments(products: CatalogProduct[]): IngestionDo
   });
 }
 
+export function embedDocument(document: IngestionDocument): EmbeddedIngestionDocument {
+  return {
+    ...document,
+    embedding: embedText(document.semanticText),
+  };
+}
+
+export function embedDocuments(documents: IngestionDocument[]): EmbeddedIngestionDocument[] {
+  return documents.map(embedDocument);
+}
+
 export function summarizeIngestion(products: CatalogProduct[], documents: IngestionDocument[]): IngestionSummary {
   const categoryCount = new Set(products.map((product) => product.category?.name ?? "Sem categoria")).size;
 
@@ -112,11 +127,53 @@ export async function runCatalogIngestionPipeline(apiUrl = DEFAULT_API_URL) {
   const products = await fetchCatalog(apiUrl);
   const normalized = normalizeCatalog(products);
   const documents = buildIngestionDocuments(products);
+  const embeddedDocuments = embedDocuments(documents);
   const summary = summarizeIngestion(products, documents);
 
   return {
     products: normalized,
     documents,
+    embeddedDocuments,
     summary,
   };
+}
+
+function embedText(text: string, dimensions = 8) {
+  const vector = Array.from({ length: dimensions }, () => 0);
+  const tokens = text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+
+  for (const token of tokens) {
+    let hash = 0;
+
+    for (let index = 0; index < token.length; index += 1) {
+      hash = (hash * 31 + token.charCodeAt(index)) >>> 0;
+    }
+
+    vector[hash % dimensions] += token.length;
+  }
+
+  const magnitude = Math.sqrt(vector.reduce((sum, value) => sum + value * value, 0)) || 1;
+
+  return vector.map((value) => Number((value / magnitude).toFixed(6)));
+}
+
+export async function persistSemanticIndex(
+  apiUrl: string,
+  documents: EmbeddedIngestionDocument[],
+) {
+  const response = await fetch(`${apiUrl}/api/catalog/semantic-index`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      documents,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Falha ao persistir index semantico: ${response.status}`);
+  }
+
+  return response.json() as Promise<{ storedCount: number }>;
 }

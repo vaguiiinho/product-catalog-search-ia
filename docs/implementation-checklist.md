@@ -30,8 +30,8 @@ Legenda:
 ## Fase 3 - Busca semantica
 
 - [x] definir estrategia de ingestao;
-- [ ] gerar embeddings dos produtos;
-- [ ] armazenar vetores no banco;
+- [x] gerar embeddings dos produtos;
+- [x] armazenar vetores no banco;
 - [ ] implementar busca hibrida;
 - [x] adicionar ranking de resultados;
 - [x] exibir justificativa simples da relevancia.
