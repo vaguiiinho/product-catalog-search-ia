@@ -1,10 +1,19 @@
 {
   "name": "@pcs/worker",
   "private": true,
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0"
+  },
   "scripts": {
-    "dev": "echo \"configure worker runtime later\"",
-    "start": "echo \"configure worker runtime later\"",
-    "build": "echo \"build worker later\"",
+    "dev": "tsx src/main.ts",
+    "start": "node dist/main.js",
+    "build": "tsc -p tsconfig.json",
     "lint": "echo \"lint worker later\"",
     "test": "echo \"test worker later\""
   }

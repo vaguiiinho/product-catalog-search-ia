@@ -99,3 +99,11 @@ Os agentes do projeto estao em [`.agents/README.md`](./.agents/README.md) e cobr
 ## Proximo passo
 
 Siga a checklist em [docs/implementation-checklist.md](./docs/implementation-checklist.md) para iniciar a implementacao por fases.
+
+## Como rodar
+
+- instalar dependencias: `corepack pnpm install`
+- validar tudo: `npm run lint` e `npm run test`
+- iniciar frontend: `npm run dev:web`
+- iniciar backend: `npm run dev:api`
+- iniciar worker: `npm run dev:worker`
