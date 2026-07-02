@@ -5,6 +5,7 @@ describe("CreateProductUseCase", () => {
   it("delegates creation to the repository", async () => {
     const repository: ProductRepositoryPort = {
       findAll: jest.fn(),
+      search: jest.fn(),
       findById: jest.fn(),
       create: jest.fn().mockResolvedValue({
         id: "prod_1",

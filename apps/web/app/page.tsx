@@ -110,8 +110,7 @@ function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?:
         relevanceLabel,
         relevanceNote,
       };
-    })
-    .sort((left, right) => right.score - left.score || right.updatedAt.localeCompare(left.updatedAt));
+    });
 }
 
 function ProductGrid({

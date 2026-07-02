@@ -12,6 +12,7 @@ export class SemanticIndexService implements OnModuleInit {
 
   async onModuleInit() {
     await this.prisma.$executeRaw`CREATE EXTENSION IF NOT EXISTS vector`;
+    await this.prisma.$executeRaw`CREATE EXTENSION IF NOT EXISTS unaccent`;
     await this.prisma.$executeRaw`
       CREATE TABLE IF NOT EXISTS semantic_documents (
         id TEXT PRIMARY KEY,

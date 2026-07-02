@@ -3,17 +3,13 @@ import { Product } from "../domain/product.entity";
 import { PRODUCT_REPOSITORY, ProductRepositoryPort } from "../domain/product.repository.port";
 
 @Injectable()
-export class ListProductsUseCase {
+export class SearchProductsUseCase {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: ProductRepositoryPort,
   ) {}
 
-  async execute(query?: string): Promise<Product[]> {
-    if (query?.trim()) {
-      return this.productRepository.search(query);
-    }
-
-    return this.productRepository.findAll();
+  execute(query: string): Promise<Product[]> {
+    return this.productRepository.search(query);
   }
 }

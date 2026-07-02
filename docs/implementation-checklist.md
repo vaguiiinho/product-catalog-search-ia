@@ -32,7 +32,7 @@ Legenda:
 - [x] definir estrategia de ingestao;
 - [x] gerar embeddings dos produtos;
 - [x] armazenar vetores no banco;
-- [ ] implementar busca hibrida;
+- [x] implementar busca hibrida;
 - [x] adicionar ranking de resultados;
 - [x] exibir justificativa simples da relevancia.
 

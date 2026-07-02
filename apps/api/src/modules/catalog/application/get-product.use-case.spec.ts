@@ -5,6 +5,7 @@ describe("GetProductUseCase", () => {
   it("returns a product by id", async () => {
     const repository: ProductRepositoryPort = {
       findAll: jest.fn(),
+      search: jest.fn(),
       findById: jest.fn().mockResolvedValue({
         id: "prod_1",
         name: "Tenis leve",

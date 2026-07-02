@@ -7,6 +7,7 @@ import {
   ProductImage,
 } from "../domain/product.entity";
 import { CreateProductInput, ProductRepositoryPort } from "../domain/product.repository.port";
+import { embedText, toVectorLiteral } from "./semantic-vector";
 import { PrismaService } from "./prisma.service";
 
 @Injectable()
@@ -45,6 +46,91 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
       orderBy: { createdAt: "desc" },
     });
     return products.map(mapProduct);
+  }
+
+  async search(query: string): Promise<Product[]> {
+    const normalizedQuery = query.trim();
+    if (!normalizedQuery) {
+      return this.findAll();
+    }
+
+    const queryEmbedding = embedText(normalizedQuery);
+
+    const rows = await this.prisma.$queryRaw<
+      {
+        productId: string;
+      }[]
+    >`
+      WITH query_vector AS (
+        SELECT ${toVectorLiteral(queryEmbedding)}::vector(8) AS embedding,
+               ${normalizedQuery}::text AS query
+      ),
+      scored_products AS (
+        SELECT
+          p.id AS "productId",
+          (
+            GREATEST(0, 1 - COALESCE(sd.embedding <=> qv.embedding, 1)) * 0.72 +
+            (
+              CASE WHEN p.name ILIKE '%' || qv.query || '%' THEN 4 ELSE 0 END +
+              CASE WHEN p.description ILIKE '%' || qv.query || '%' THEN 3 ELSE 0 END +
+              CASE WHEN COALESCE(c.name, '') ILIKE '%' || qv.query || '%' THEN 2 ELSE 0 END +
+              COALESCE(attr.attribute_score, 0)
+            ) * 0.28
+          ) AS "hybridScore"
+        FROM "Product" p
+        LEFT JOIN "Category" c ON c.id = p."categoryId"
+        LEFT JOIN semantic_documents sd ON sd.product_id = p.id
+        CROSS JOIN query_vector qv
+        LEFT JOIN LATERAL (
+          SELECT COUNT(*)::float * 0.75 AS attribute_score
+          FROM "ProductAttribute" pa
+          WHERE pa."productId" = p.id
+            AND (pa.key ILIKE '%' || qv.query || '%' OR pa.value ILIKE '%' || qv.query || '%')
+        ) attr ON true
+        WHERE
+          unaccent(p.name) ILIKE '%' || unaccent(qv.query) || '%' OR
+          unaccent(p.description) ILIKE '%' || unaccent(qv.query) || '%' OR
+          unaccent(COALESCE(c.name, '')) ILIKE '%' || unaccent(qv.query) || '%' OR
+          EXISTS (
+            SELECT 1
+            FROM "ProductAttribute" pa
+            WHERE pa."productId" = p.id
+              AND (unaccent(pa.key) ILIKE '%' || unaccent(qv.query) || '%' OR unaccent(pa.value) ILIKE '%' || unaccent(qv.query) || '%')
+          ) OR
+          unaccent(sd.semantic_text) ILIKE '%' || unaccent(qv.query) || '%'
+        ORDER BY "hybridScore" DESC, p."createdAt" DESC
+        LIMIT 20
+      )
+      SELECT "productId" FROM scored_products
+    `;
+
+    const orderedIds = rows.map((row) => row.productId);
+
+    if (orderedIds.length === 0) {
+      return [];
+    }
+
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: orderedIds,
+        },
+      },
+      include: {
+        category: true,
+        attributes: true,
+        images: {
+          orderBy: { position: "asc" },
+        },
+      },
+    });
+
+    const byId = new Map(products.map((product) => [product.id, mapProduct(product)]));
+
+    return orderedIds.flatMap((id) => {
+      const product = byId.get(id);
+      return product ? [product] : [];
+    });
   }
 
   async findById(id: string): Promise<Product | null> {

@@ -21,6 +21,7 @@ describe("ListProductsUseCase", () => {
           updatedAt: new Date("2026-01-01T00:00:00.000Z"),
         },
       ]),
+      search: jest.fn(),
       findById: jest.fn(),
       create: jest.fn(),
     };
@@ -28,6 +29,20 @@ describe("ListProductsUseCase", () => {
     const useCase = new ListProductsUseCase(repository);
 
     await expect(useCase.execute()).resolves.toHaveLength(1);
-    expect(repository.findAll).toHaveBeenCalledWith(undefined);
+    expect(repository.findAll).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses hybrid search when query is provided", async () => {
+    const repository: ProductRepositoryPort = {
+      findAll: jest.fn(),
+      search: jest.fn().mockResolvedValue([]),
+      findById: jest.fn(),
+      create: jest.fn(),
+    };
+
+    const useCase = new ListProductsUseCase(repository);
+
+    await expect(useCase.execute("tenis")).resolves.toEqual([]);
+    expect(repository.search).toHaveBeenCalledWith("tenis");
   });
 });
