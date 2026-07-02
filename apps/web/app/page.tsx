@@ -1,4 +1,5 @@
 import { getProducts } from "@/lib/products";
+import Link from "next/link";
 
 const features = [
   {
@@ -61,6 +62,9 @@ function ProductGrid({ products }: { products: Awaited<ReturnType<typeof getProd
               <span>ID {product.id.slice(0, 8)}</span>
               <span>Atualizado {new Date(product.updatedAt).toLocaleDateString("pt-BR")}</span>
             </footer>
+            <Link className="product-link" href={`/produto/${product.id}`}>
+              Ver detalhe
+            </Link>
           </article>
         ))}
       </div>

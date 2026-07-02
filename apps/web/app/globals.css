@@ -97,6 +97,13 @@ input {
     rgba(255, 255, 255, 0.4);
 }
 
+.product-link {
+  align-self: flex-start;
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
 .product-card h3 {
   margin: 0;
   font-size: 1.2rem;
@@ -138,6 +145,56 @@ input {
   margin-top: auto;
   font-size: 0.86rem;
   color: var(--muted);
+}
+
+.hero-detail {
+  display: grid;
+  gap: 24px;
+}
+
+.detail-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.back-link {
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+.detail-id {
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.detail-stat {
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(29, 28, 26, 0.1);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.detail-stat span {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.detail-stat strong {
+  font-size: 1.1rem;
 }
 
 .eyebrow {
@@ -232,6 +289,7 @@ h1 {
 
 @media (max-width: 900px) {
   .product-grid,
+  .detail-grid,
   .features {
     grid-template-columns: 1fr;
   }

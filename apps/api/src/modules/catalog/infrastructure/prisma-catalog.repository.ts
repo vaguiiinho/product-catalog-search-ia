@@ -13,6 +13,14 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
     return products.map(mapProduct);
   }
 
+  async findById(id: string): Promise<Product | null> {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
+
+    return product ? mapProduct(product) : null;
+  }
+
   async create(input: CreateProductInput): Promise<Product> {
     const product = await this.prisma.product.create({
       data: {
