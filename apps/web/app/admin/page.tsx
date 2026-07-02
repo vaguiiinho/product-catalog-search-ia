@@ -23,6 +23,7 @@ async function createProduct(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const price = Number(formData.get("price"));
+  const categoryName = String(formData.get("categoryName") ?? "").trim();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
   if (!name || !description || Number.isNaN(price) || price < 0) {
@@ -38,6 +39,7 @@ async function createProduct(formData: FormData) {
       name,
       description,
       price,
+      categoryName,
     }),
   });
 
@@ -66,6 +68,7 @@ function AdminProductList({ products }: { products: Product[] }) {
           <article key={product.id} className="admin-row">
             <div>
               <h3>{product.name}</h3>
+              <p className="product-category">{product.category.name}</p>
               <p>{product.description}</p>
             </div>
             <div className="admin-row-meta">
@@ -126,6 +129,11 @@ export default async function AdminPage({
         </div>
 
         <form className="admin-form" action={createProduct}>
+          <label className="admin-field">
+            <span>Categoria</span>
+            <input name="categoryName" placeholder="Ex: Calçados" />
+          </label>
+
           <label className="admin-field">
             <span>Nome</span>
             <input name="name" placeholder="Ex: Tênis de trilha resistente" />

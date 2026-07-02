@@ -7,6 +7,7 @@ describe("CreateProductDto", () => {
       name: "Tenis leve",
       description: "Tenis para corrida urbana",
       price: 299.9,
+      categoryName: "Calçados",
     });
 
     await expect(validate(dto)).resolves.toEqual([]);

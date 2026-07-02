@@ -4,6 +4,7 @@ export type CreateProductInput = {
   name: string;
   description: string;
   price: number;
+  categoryName?: string;
 };
 
 export const PRODUCT_REPOSITORY = Symbol("PRODUCT_REPOSITORY");

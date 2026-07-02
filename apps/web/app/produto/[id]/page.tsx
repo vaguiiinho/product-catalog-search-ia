@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductById } from "@/lib/product";
@@ -62,7 +63,35 @@ export default async function ProductDetailPage({
         <p className="eyebrow">Detalhe do produto</p>
         <h1>{product.name}</h1>
         <span className="detail-id">ID {product.id}</span>
+        <p className="product-category">{product.category.name}</p>
         <p className="lead">{product.description}</p>
+
+        {product.images.length > 0 ? (
+          <div className="image-gallery">
+            {product.images.map((image) => (
+              <figure key={image.id} className="image-card">
+                <Image
+                  src={image.url}
+                  alt={image.alt}
+                  width={1200}
+                  height={800}
+                  sizes="(max-width: 900px) 100vw, 50vw"
+                  style={{ width: "100%", height: "240px", objectFit: "cover" }}
+                />
+              </figure>
+            ))}
+          </div>
+        ) : null}
+
+        {product.attributes.length > 0 ? (
+          <div className="attribute-list">
+            {product.attributes.map((attribute) => (
+              <span key={attribute.id} className="attribute-chip">
+                {attribute.key}: {attribute.value}
+              </span>
+            ))}
+          </div>
+        ) : null}
 
         <div className="detail-grid">
           <article className="detail-stat">

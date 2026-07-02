@@ -10,6 +10,13 @@ describe("ListProductsUseCase", () => {
           name: "Tenis leve",
           description: "Tenis para corrida urbana",
           price: 299.9,
+          category: {
+            id: "cat_1",
+            name: "Calçados",
+            slug: "calcados",
+          },
+          attributes: [],
+          images: [],
           createdAt: new Date("2026-01-01T00:00:00.000Z"),
           updatedAt: new Date("2026-01-01T00:00:00.000Z"),
         },

@@ -54,6 +54,10 @@ function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?:
     .map((product) => {
       const name = product.name.toLowerCase();
       const description = product.description.toLowerCase();
+      const categoryName = product.category.name.toLowerCase();
+      const attributeText = product.attributes
+        .map((attribute) => `${attribute.key} ${attribute.value}`.toLowerCase())
+        .join(" ");
 
       let score = 0;
 
@@ -65,6 +69,10 @@ function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?:
         score += 20;
       }
 
+      if (categoryName.includes(normalizedQuery)) {
+        score += 16;
+      }
+
       for (const term of terms) {
         if (name.includes(term)) {
           score += 8;
@@ -72,6 +80,14 @@ function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?:
 
         if (description.includes(term)) {
           score += 3;
+        }
+
+        if (categoryName.includes(term)) {
+          score += 5;
+        }
+
+        if (attributeText.includes(term)) {
+          score += 2;
         }
       }
 
@@ -82,6 +98,8 @@ function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?:
         ? "O nome do produto bate com a busca."
         : description.includes(normalizedQuery)
           ? "A descrição reforça essa correspondência."
+          : categoryName.includes(normalizedQuery)
+            ? "A categoria do produto bate com a busca."
           : terms.some((term) => name.includes(term))
             ? "Parte dos termos aparece no nome."
             : "Há correspondência parcial na descrição.";
@@ -138,7 +156,15 @@ function ProductGrid({
               <span className="product-price">{formatPrice(product.price)}</span>
             </div>
             <h3>{product.name}</h3>
+            <p className="product-category">{product.category.name}</p>
             <p>{product.description}</p>
+            <div className="product-attributes">
+              {product.attributes.slice(0, 3).map((attribute) => (
+                <span key={attribute.id} className="attribute-chip">
+                  {attribute.key}: {attribute.value}
+                </span>
+              ))}
+            </div>
             <p className="product-relevance">{product.relevanceNote}</p>
             <footer className="product-meta">
               <span>ID {product.id.slice(0, 8)}</span>

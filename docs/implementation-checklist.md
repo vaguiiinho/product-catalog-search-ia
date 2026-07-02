@@ -19,7 +19,7 @@ Legenda:
 
 ## Fase 2 - Catalogo
 
-- [~] modelar produtos, categorias, atributos e imagens; produtos concluídos; categorias, atributos e imagens ainda dependem da expansão do domínio.
+- [x] modelar produtos, categorias, atributos e imagens;
 - [x] criar API de CRUD;
 - [x] criar telas publicas do catalogo;
 - [x] criar pagina de detalhe de produto;
