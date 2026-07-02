@@ -1,0 +1,57 @@
+@startuml
+!include C4_Context.puml
+!include C4_Container.puml
+
+title Sistema de Catalogo com Busca Semantica
+
+Person(user, "Usuario", "Pesquisa produtos e navega no catalogo")
+Person(admin, "Administrador", "Gerencia catalogo e reindexacao")
+
+System_Boundary(s1, "Sistema de Catalogo") {
+  System(catalogSystem, "Catalogo com Busca Semantica", "Catalogo de produtos com busca hibrida e IA")
+}
+
+System_Ext(storage, "Armazenamento de Imagens", "S3 compativel ou storage local")
+System_Ext(llm, "Servico de LLM", "Modelo usado para embeddings e respostas assistidas")
+
+Rel(user, catalogSystem, "Busca produtos, filtra e visualiza detalhes")
+Rel(admin, catalogSystem, "Cria, edita e indexa produtos")
+Rel(catalogSystem, storage, "Lê e grava imagens")
+Rel(catalogSystem, llm, "Gera embeddings e, opcionalmente, respostas")
+
+LAYOUT_WITH_LEGEND()
+
+newpage
+title Sistema de Catalogo com Busca Semantica - Containers
+
+Person(user2, "Usuario", "Pesquisa produtos e navega no catalogo")
+Person(admin2, "Administrador", "Gerencia catalogo e reindexacao")
+
+System_Boundary(s2, "Sistema de Catalogo") {
+  Container(web, "Frontend", "Next.js", "Interface publica, SEO, busca e paginas de produto")
+  Container(adminWeb, "Admin App", "Next.js", "Painel para gestao do catalogo")
+  Container(api, "Catalog API", "NestJS", "CRUD, regras de negocio, endpoints de busca")
+  Container(worker, "Ingestion Worker", "NestJS Worker", "Importacao, limpeza e geracao de embeddings")
+  ContainerDb(db, "PostgreSQL + pgvector", "PostgreSQL", "Produtos, atributos, buscas e vetores")
+  Container(storage2, "Object Storage", "S3 compativel", "Imagens e arquivos do catalogo")
+  Container(ai, "AI Pipeline", "LlamaIndex", "Indexacao, recuperacao semantica e RAG")
+}
+
+Rel(user2, web, "Acessa catalogo e busca")
+Rel(admin2, adminWeb, "Gerencia produtos e reindexacao")
+
+Rel(web, api, "Consulta catalogo e busca")
+Rel(adminWeb, api, "CRUD e operacoes administrativas")
+
+Rel(api, db, "Lê/escreve dados do catalogo")
+Rel(api, storage2, "Lê imagens e assets")
+Rel(api, ai, "Solicita busca semantica e ranking")
+
+Rel(worker, db, "Persiste embeddings e metadados")
+Rel(worker, storage2, "Lê imagens e arquivos importados")
+Rel(worker, ai, "Gera embeddings e indices")
+
+Rel(ai, db, "Consulta vetores e documentos")
+
+LAYOUT_WITH_LEGEND()
+@enduml
