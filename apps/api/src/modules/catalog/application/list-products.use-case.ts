@@ -1,16 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Product } from "../domain/product.entity";
-import { ProductRepository } from "../domain/product.repository";
+import { PRODUCT_REPOSITORY, ProductRepositoryPort } from "../domain/product.repository.port";
 
 @Injectable()
 export class ListProductsUseCase {
-  constructor(private readonly productRepository?: ProductRepository) {}
+  constructor(
+    @Inject(PRODUCT_REPOSITORY)
+    private readonly productRepository: ProductRepositoryPort,
+  ) {}
 
   async execute(): Promise<Product[]> {
-    if (!this.productRepository) {
-      return [];
-    }
-
     return this.productRepository.findAll();
   }
 }
