@@ -21,5 +21,6 @@ describe("ListProductsUseCase", () => {
     const useCase = new ListProductsUseCase(repository);
 
     await expect(useCase.execute()).resolves.toHaveLength(1);
+    expect(repository.findAll).toHaveBeenCalledWith(undefined);
   });
 });

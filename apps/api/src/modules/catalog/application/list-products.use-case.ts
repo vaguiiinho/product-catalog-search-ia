@@ -9,7 +9,7 @@ export class ListProductsUseCase {
     private readonly productRepository: ProductRepositoryPort,
   ) {}
 
-  async execute(): Promise<Product[]> {
-    return this.productRepository.findAll();
+  async execute(query?: string): Promise<Product[]> {
+    return this.productRepository.findAll(query);
   }
 }

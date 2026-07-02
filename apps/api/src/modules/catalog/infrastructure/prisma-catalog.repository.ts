@@ -8,8 +8,19 @@ import { PrismaService } from "./prisma.service";
 export class PrismaCatalogRepository implements ProductRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Product[]> {
-    const products = await this.prisma.product.findMany({ orderBy: { createdAt: "desc" } });
+  async findAll(query?: string): Promise<Product[]> {
+    const normalizedQuery = query?.trim();
+    const products = await this.prisma.product.findMany({
+      where: normalizedQuery
+        ? {
+            OR: [
+              { name: { contains: normalizedQuery, mode: "insensitive" } },
+              { description: { contains: normalizedQuery, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
+      orderBy: { createdAt: "desc" },
+    });
     return products.map(mapProduct);
   }
 

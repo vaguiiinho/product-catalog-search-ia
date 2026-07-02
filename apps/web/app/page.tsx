@@ -23,16 +23,24 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
-function ProductGrid({ products }: { products: Awaited<ReturnType<typeof getProducts>> }) {
+function ProductGrid({
+  products,
+  query,
+}: {
+  products: Awaited<ReturnType<typeof getProducts>>;
+  query?: string;
+}) {
   if (products.length === 0) {
     return (
       <section className="catalog-panel">
         <div className="section-header">
           <p className="eyebrow">Catalogo</p>
-          <h2>Nenhum produto cadastrado ainda.</h2>
+          <h2>{query ? "Nenhum resultado encontrado." : "Nenhum produto cadastrado ainda."}</h2>
         </div>
         <p className="empty-state">
-          O frontend ja conversa com a API. Assim que o seed rodar, os cards aparecem aqui.
+          {query
+            ? `Nao encontramos resultados para "${query}". Tente outra busca.`
+            : "O frontend ja conversa com a API. Assim que o seed rodar, os cards aparecem aqui."}
         </p>
       </section>
     );
@@ -72,12 +80,17 @@ function ProductGrid({ products }: { products: Awaited<ReturnType<typeof getProd
   );
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
   let products: Awaited<ReturnType<typeof getProducts>> = [];
   let loadError = "";
 
   try {
-    products = await getProducts();
+    products = await getProducts(q);
   } catch {
     loadError = "Nao foi possivel carregar a API agora. Verifique se o backend esta rodando.";
   }
@@ -92,11 +105,16 @@ export default async function HomePage() {
           IA pronta para demonstrar o fluxo de consulta por intencao.
         </p>
 
-        <form className="search-box">
+        <form className="search-box" method="get">
           <label className="sr-only" htmlFor="query">
             Buscar produtos
           </label>
-          <input id="query" name="query" placeholder="Ex: tenis leve para corrida urbana" />
+          <input
+            id="query"
+            name="q"
+            defaultValue={q}
+            placeholder="Ex: tenis leve para corrida urbana"
+          />
           <button type="submit">Buscar</button>
         </form>
       </section>
@@ -110,7 +128,7 @@ export default async function HomePage() {
           <p className="empty-state">{loadError}</p>
         </section>
       ) : (
-        <ProductGrid products={products} />
+        <ProductGrid products={products} query={q} />
       )}
 
       <section className="features">

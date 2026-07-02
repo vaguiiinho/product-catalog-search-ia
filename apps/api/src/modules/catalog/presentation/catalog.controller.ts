@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Param, Post, Query } from "@nestjs/common";
 import { CreateProductUseCase } from "../application/create-product.use-case";
 import { GetProductUseCase } from "../application/get-product.use-case";
 import { ListProductsUseCase } from "../application/list-products.use-case";
@@ -13,8 +13,8 @@ export class CatalogController {
   ) {}
 
   @Get()
-  list() {
-    return this.listProductsUseCase.execute();
+  list(@Query("q") query?: string) {
+    return this.listProductsUseCase.execute(query);
   }
 
   @Get(":id")
