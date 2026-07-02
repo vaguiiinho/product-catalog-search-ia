@@ -68,6 +68,17 @@ Construir um catalogo de produtos com:
 - `LlamaIndex` para ingestao, retrieval e RAG;
 - `LangChain` apenas se houver necessidade de agente depois.
 
+## Topologia do repositorio
+
+O projeto sera desenvolvido como monorepo com apps independentes:
+
+- `apps/web` - frontend;
+- `apps/api` - backend principal;
+- `apps/worker` - processamento em background;
+- `packages/shared` - artefatos compartilhados puros, se necessario.
+
+Cada app tera dependencias e scripts proprios, mas o fluxo de desenvolvimento e documentacao sera centralizado no mesmo repositorio.
+
 ## Orquestracao de agentes
 
 O projeto usa agentes especializados para manter a arquitetura e a documentacao coerentes:

@@ -42,6 +42,10 @@ O monorepo esta organizado em:
 - `apps/worker` - processamento em background;
 - `packages/shared` - utilitarios e contratos compartilhados no futuro.
 
+## Topologia
+
+O repositorio segue a estrategia de monorepo com apps independentes, pensando em um deploy futuro onde frontend, backend e worker possam rodar em ambientes diferentes.
+
 ## Orquestracao de agentes
 
 Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e sao organizados por responsabilidade tecnica:
@@ -61,6 +65,7 @@ Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e sao 
 - [ADR 0002 - busca semantica](./docs/adr/0002-semantic-search-with-llamaindex.md)
 - [ADR 0003 - documentacao como entrega](./docs/adr/0003-documentation-and-deliverables.md)
 - [ADR 0004 - orquestracao de agentes](./docs/adr/0004-agent-orchestration.md)
+- [ADR 0005 - monorepo com apps independentes](./docs/adr/0005-monorepo-with-independent-apps.md)
 
 ## Agentes
 

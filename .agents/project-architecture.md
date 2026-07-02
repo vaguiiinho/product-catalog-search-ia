@@ -12,6 +12,14 @@ Build a portfolio-ready product catalog with semantic search, clear architecture
 - `LlamaIndex` for ingestion, retrieval and RAG.
 - `LangChain` only if an agent layer becomes necessary later.
 
+## Repository strategy
+
+- Use a monorepo.
+- Keep `apps/web`, `apps/api` and `apps/worker` independent.
+- Give each app its own `package.json`, scripts and lifecycle.
+- Keep `packages/shared` minimal and framework-agnostic.
+- Assume future deploy separation even while developing in one repository.
+
 ## System boundaries
 
 - Public frontend for search, browsing and product detail.
@@ -37,6 +45,7 @@ Build a portfolio-ready product catalog with semantic search, clear architecture
 - Domain stays pure and framework-agnostic.
 - Infrastructure isolates Prisma, storage and external services.
 - Search should combine structured filters with semantic retrieval.
+- Apps must communicate through explicit contracts, not internal runtime imports.
 
 ## Documentation rules
 
@@ -44,4 +53,3 @@ Build a portfolio-ready product catalog with semantic search, clear architecture
 - ADRs capture decisions that are hard to reverse.
 - The implementation checklist tracks phased delivery.
 - The agent index in `.agents/README.md` is the entry point for orchestration.
-
