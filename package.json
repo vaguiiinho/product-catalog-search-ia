@@ -1,0 +1,12 @@
+{
+  "name": "product-catalog-search-ia",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev:web": "pnpm --dir apps/web dev",
+    "dev:api": "pnpm --dir apps/api start:dev",
+    "dev:worker": "pnpm --dir apps/worker dev",
+    "lint": "echo \"configure lint later\"",
+    "test": "echo \"configure tests later\""
+  }
+}

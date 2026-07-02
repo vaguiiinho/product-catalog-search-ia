@@ -33,6 +33,15 @@ O sistema esta organizado em:
 
 Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml).
 
+## Estrutura inicial
+
+O monorepo esta organizado em:
+
+- `apps/web` - Next.js para o frontend publico e admin;
+- `apps/api` - NestJS para a API principal;
+- `apps/worker` - processamento em background;
+- `packages/shared` - utilitarios e contratos compartilhados no futuro.
+
 ## Orquestracao de agentes
 
 Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e sao organizados por responsabilidade tecnica:
