@@ -23,11 +23,77 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+type RankedProduct = Awaited<ReturnType<typeof getProducts>>[number] & {
+  score: number;
+  relevanceLabel: string;
+  relevanceNote: string;
+};
+
+function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?: string) {
+  const normalizedQuery = query?.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return products.map((product) => ({
+      ...product,
+      score: 0,
+      relevanceLabel: "Ordenado por data",
+      relevanceNote: "Sem busca aplicada; exibindo os resultados mais recentes.",
+    }));
+  }
+
+  const terms = normalizedQuery.split(/\s+/).filter((term) => term.length > 2);
+
+  return products
+    .map((product) => {
+      const name = product.name.toLowerCase();
+      const description = product.description.toLowerCase();
+
+      let score = 0;
+
+      if (name.includes(normalizedQuery)) {
+        score += 40;
+      }
+
+      if (description.includes(normalizedQuery)) {
+        score += 20;
+      }
+
+      for (const term of terms) {
+        if (name.includes(term)) {
+          score += 8;
+        }
+
+        if (description.includes(term)) {
+          score += 3;
+        }
+      }
+
+      const relevanceLabel =
+        score >= 50 ? "Alta relevância" : score >= 20 ? "Relevância média" : "Relevância parcial";
+
+      const relevanceNote = name.includes(normalizedQuery)
+        ? "O nome do produto bate com a busca."
+        : description.includes(normalizedQuery)
+          ? "A descrição reforça essa correspondência."
+          : terms.some((term) => name.includes(term))
+            ? "Parte dos termos aparece no nome."
+            : "Há correspondência parcial na descrição.";
+
+      return {
+        ...product,
+        score,
+        relevanceLabel,
+        relevanceNote,
+      };
+    })
+    .sort((left, right) => right.score - left.score || right.updatedAt.localeCompare(left.updatedAt));
+}
+
 function ProductGrid({
   products,
   query,
 }: {
-  products: Awaited<ReturnType<typeof getProducts>>;
+  products: RankedProduct[];
   query?: string;
 }) {
   if (products.length === 0) {
@@ -61,11 +127,12 @@ function ProductGrid({
         {products.map((product) => (
           <article key={product.id} className="product-card">
             <div className="product-card-top">
-              <p className="product-badge">Produto</p>
+              <p className="product-badge">{product.relevanceLabel}</p>
               <span className="product-price">{formatPrice(product.price)}</span>
             </div>
             <h3>{product.name}</h3>
             <p>{product.description}</p>
+            <p className="product-relevance">{product.relevanceNote}</p>
             <footer className="product-meta">
               <span>ID {product.id.slice(0, 8)}</span>
               <span>Atualizado {new Date(product.updatedAt).toLocaleDateString("pt-BR")}</span>
@@ -86,11 +153,11 @@ export default async function HomePage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q } = await searchParams;
-  let products: Awaited<ReturnType<typeof getProducts>> = [];
+  let products: RankedProduct[] = [];
   let loadError = "";
 
   try {
-    products = await getProducts(q);
+    products = rankProducts(await getProducts(q), q);
   } catch {
     loadError = "Nao foi possivel carregar a API agora. Verifique se o backend esta rodando.";
   }
@@ -109,14 +176,19 @@ export default async function HomePage({
           <label className="sr-only" htmlFor="query">
             Buscar produtos
           </label>
-          <input
-            id="query"
-            name="q"
-            defaultValue={q}
-            placeholder="Ex: tenis leve para corrida urbana"
-          />
-          <button type="submit">Buscar</button>
-        </form>
+        <input
+          id="query"
+          name="q"
+          defaultValue={q}
+          placeholder="Ex: tenis leve para corrida urbana"
+        />
+        <button type="submit">Buscar</button>
+      </form>
+      {q ? (
+        <p className="search-hint">
+          Ordenando resultados por relevancia para <strong>{q}</strong>.
+        </p>
+      ) : null}
       </section>
 
       {loadError ? (
