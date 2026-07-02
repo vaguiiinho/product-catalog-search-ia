@@ -1,3 +1,5 @@
+import { getProducts } from "@/lib/products";
+
 const features = [
   {
     title: "Busca semantica",
@@ -13,7 +15,69 @@ const features = [
   },
 ];
 
-export default function HomePage() {
+function formatPrice(price: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(price);
+}
+
+function ProductGrid({ products }: { products: Awaited<ReturnType<typeof getProducts>> }) {
+  if (products.length === 0) {
+    return (
+      <section className="catalog-panel">
+        <div className="section-header">
+          <p className="eyebrow">Catalogo</p>
+          <h2>Nenhum produto cadastrado ainda.</h2>
+        </div>
+        <p className="empty-state">
+          O frontend ja conversa com a API. Assim que o seed rodar, os cards aparecem aqui.
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="catalog-panel">
+      <div className="section-header">
+        <p className="eyebrow">Catalogo</p>
+        <h2>Produtos carregados da API NestJS.</h2>
+        <p className="section-copy">
+          A home agora mostra dados reais do backend, o que fecha o primeiro passo do fluxo
+          público do catálogo.
+        </p>
+      </div>
+
+      <div className="product-grid">
+        {products.map((product) => (
+          <article key={product.id} className="product-card">
+            <div className="product-card-top">
+              <p className="product-badge">Produto</p>
+              <span className="product-price">{formatPrice(product.price)}</span>
+            </div>
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+            <footer className="product-meta">
+              <span>ID {product.id.slice(0, 8)}</span>
+              <span>Atualizado {new Date(product.updatedAt).toLocaleDateString("pt-BR")}</span>
+            </footer>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export default async function HomePage() {
+  let products: Awaited<ReturnType<typeof getProducts>> = [];
+  let loadError = "";
+
+  try {
+    products = await getProducts();
+  } catch {
+    loadError = "Nao foi possivel carregar a API agora. Verifique se o backend esta rodando.";
+  }
+
   return (
     <main className="page-shell">
       <section className="hero">
@@ -32,6 +96,18 @@ export default function HomePage() {
           <button type="submit">Buscar</button>
         </form>
       </section>
+
+      {loadError ? (
+        <section className="catalog-panel">
+          <div className="section-header">
+            <p className="eyebrow">Conexao</p>
+            <h2>Frontend pronto, backend indisponivel.</h2>
+          </div>
+          <p className="empty-state">{loadError}</p>
+        </section>
+      ) : (
+        <ProductGrid products={products} />
+      )}
 
       <section className="features">
         {features.map((feature) => (
