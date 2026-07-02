@@ -165,6 +165,12 @@ export default async function HomePage({
   return (
     <main className="page-shell">
       <section className="hero">
+        <div className="detail-topline">
+          <span className="detail-id">Frontend publico</span>
+          <Link className="back-link" href="/admin">
+            Abrir admin
+          </Link>
+        </div>
         <p className="eyebrow">Product Catalog Search IA</p>
         <h1>Catalogo de produtos com busca semantica e arquitetura explicita.</h1>
         <p className="lead">
@@ -176,19 +182,19 @@ export default async function HomePage({
           <label className="sr-only" htmlFor="query">
             Buscar produtos
           </label>
-        <input
-          id="query"
-          name="q"
-          defaultValue={q}
-          placeholder="Ex: tenis leve para corrida urbana"
-        />
-        <button type="submit">Buscar</button>
-      </form>
-      {q ? (
-        <p className="search-hint">
-          Ordenando resultados por relevancia para <strong>{q}</strong>.
-        </p>
-      ) : null}
+          <input
+            id="query"
+            name="q"
+            defaultValue={q}
+            placeholder="Ex: tenis leve para corrida urbana"
+          />
+          <button type="submit">Buscar</button>
+        </form>
+        {q ? (
+          <p className="search-hint">
+            Ordenando resultados por relevancia para <strong>{q}</strong>.
+          </p>
+        ) : null}
       </section>
 
       {loadError ? (

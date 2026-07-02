@@ -59,6 +59,14 @@ input {
   background: rgba(255, 255, 255, 0.6);
 }
 
+.admin-panel {
+  margin-top: 20px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
 .section-header h2 {
   margin: 0;
   font-size: clamp(1.5rem, 3vw, 2rem);
@@ -175,6 +183,109 @@ input {
 .detail-id {
   font-size: 0.86rem;
   color: var(--muted);
+}
+
+.success-banner,
+.error-banner {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+.success-banner {
+  background: rgba(24, 120, 66, 0.12);
+  color: #17623d;
+}
+
+.error-banner {
+  background: rgba(163, 27, 27, 0.12);
+  color: #8f1d1d;
+}
+
+.admin-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.admin-field {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-field span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.admin-field input,
+.admin-field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text);
+  outline: none;
+}
+
+.admin-field textarea {
+  resize: vertical;
+}
+
+.admin-form button {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  padding: 16px 22px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.admin-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(29, 28, 26, 0.1);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.admin-row h3 {
+  margin: 0 0 6px;
+  font-size: 1.02rem;
+}
+
+.admin-row p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.admin-row-meta {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.admin-row-meta strong {
+  color: var(--text);
 }
 
 .detail-grid {
@@ -318,5 +429,15 @@ h1 {
 
   .search-box {
     grid-template-columns: 1fr;
+  }
+
+  .admin-row,
+  .detail-topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-row-meta {
+    justify-items: start;
   }
 }

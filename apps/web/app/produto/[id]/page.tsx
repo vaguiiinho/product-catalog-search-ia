@@ -28,11 +28,14 @@ export default async function ProductDetailPage({
           <Link href="/" className="back-link">
             Voltar ao catalogo
           </Link>
-          <span className="detail-id">ID {product.id}</span>
+          <Link href="/admin" className="back-link">
+            Abrir admin
+          </Link>
         </div>
 
         <p className="eyebrow">Detalhe do produto</p>
         <h1>{product.name}</h1>
+        <span className="detail-id">ID {product.id}</span>
         <p className="lead">{product.description}</p>
 
         <div className="detail-grid">
