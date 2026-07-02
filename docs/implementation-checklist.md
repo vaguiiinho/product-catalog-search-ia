@@ -19,6 +19,7 @@
 - [ ] criar pagina de detalhe de produto;
 - [ ] criar painel administrativo basico;
 - [ ] validar contratos entre front e back.
+- [ ] popular o catalogo com seed real via Prisma.
 
 ## Fase 3 - Busca semantica
 
