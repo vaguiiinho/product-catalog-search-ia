@@ -36,8 +36,5 @@
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
     "prisma:format": "prisma format --schema prisma/schema.prisma",
     "prisma:seed": "prisma db seed --schema prisma/schema.prisma"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
   }
 }
