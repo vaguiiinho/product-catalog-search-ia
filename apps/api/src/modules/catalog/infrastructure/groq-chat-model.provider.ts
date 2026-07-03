@@ -4,9 +4,10 @@ export const GROQ_CHAT_MODEL = Symbol("GROQ_CHAT_MODEL");
 
 export type ChatModelLike = {
   invoke(
-    messages: Array<{ role: string; content: string }>,
+    messages: unknown[],
     options?: Record<string, unknown>,
-  ): Promise<{ content: unknown }>;
+  ): Promise<{ content: unknown; tool_calls?: Array<{ id?: string; name: string; args: Record<string, unknown> }> }>;
+  bindTools?: (tools: unknown[], kwargs?: Record<string, unknown>) => ChatModelLike;
 };
 
 export function createGroqChatModel(): ChatModelLike | null {
@@ -19,5 +20,5 @@ export function createGroqChatModel(): ChatModelLike | null {
     apiKey,
     model: process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile",
     temperature: 0.2,
-  });
+  }) as unknown as ChatModelLike;
 }

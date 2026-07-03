@@ -1,4 +1,6 @@
 import { Inject, Injectable, Optional } from "@nestjs/common";
+import { ToolMessage } from "@langchain/core/messages/tool";
+import { tool } from "@langchain/core/tools";
 import { PRODUCT_REPOSITORY, ProductRepositoryPort } from "../domain/product.repository.port";
 import { GROQ_CHAT_MODEL, ChatModelLike } from "./groq-chat-model.provider";
 
@@ -40,6 +42,7 @@ export class CatalogAssistantService {
     const contextProducts = products.slice(0, 5);
     const context = buildContext(normalizedQuestion, contextProducts);
     const model = process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile";
+    const searchTool = createCatalogSearchTool(this.productRepository);
 
     if (!this.chatModel) {
       return {
@@ -53,12 +56,16 @@ export class CatalogAssistantService {
     }
 
     try {
-      const response = await this.chatModel.invoke(
+      const modelWithTools = this.chatModel.bindTools?.([searchTool], {
+        tool_choice: "auto",
+      }) ?? this.chatModel;
+
+      const firstResponse = await modelWithTools.invoke(
         [
           {
             role: "system",
             content:
-              "Voce e um assistente de catalogo. Responda em portugues usando somente o contexto fornecido. Retorne um JSON valido com as chaves answer, summary e highlights. Se faltar informacao, diga isso de forma objetiva e nao invente produtos.",
+              "Voce e um assistente de catalogo. Responda em portugues. Use a ferramenta search_catalog quando precisar recuperar produtos. Retorne um JSON valido com as chaves answer, summary e highlights. Se faltar informacao, diga isso de forma objetiva e nao invente produtos.",
           },
           {
             role: "user",
@@ -70,7 +77,65 @@ export class CatalogAssistantService {
         },
       );
 
-      const payload = parseAssistantPayload(response.content);
+      const toolCalls = firstResponse.tool_calls ?? [];
+
+      if (toolCalls.length > 0) {
+        const toolMessages = [];
+
+        for (const call of toolCalls) {
+          if (call.name !== "search_catalog") {
+            continue;
+          }
+
+          const toolResult = await (searchTool as unknown as {
+            invoke(input: { query: string; limit?: number }): Promise<{ content: unknown }>;
+          }).invoke({
+            query: String(call.args.query ?? "").trim(),
+            limit: typeof call.args.limit === "number" ? call.args.limit : undefined,
+          });
+          toolMessages.push(
+            new ToolMessage({
+              content: String(toolResult.content ?? ""),
+              tool_call_id: call.id ?? "search_catalog_call",
+              status: "success",
+            }),
+          );
+        }
+
+        if (toolMessages.length > 0) {
+          const finalResponse = await modelWithTools.invoke(
+            [
+              {
+                role: "system",
+                content:
+                  "Responda em portugues e retorne um JSON valido com answer, summary e highlights. Use somente o contexto e o resultado da ferramenta.",
+              },
+              {
+                role: "user",
+                content: context,
+              },
+              firstResponse,
+              ...toolMessages,
+            ],
+            {
+              response_format: { type: "json_object" },
+            },
+          );
+
+          const payload = parseAssistantPayload(finalResponse.content);
+
+          return {
+            question: normalizedQuestion,
+            answer: payload?.answer?.trim() || fallbackAnswer(contextProducts, normalizedQuestion),
+            model,
+            retrievedCount: contextProducts.length,
+            usedFallback: false,
+            sources: contextProducts.map(mapSource),
+          };
+        }
+      }
+
+      const payload = parseAssistantPayload(firstResponse.content);
 
       return {
         question: normalizedQuestion,
@@ -189,4 +254,61 @@ function parseAssistantPayload(content: unknown): CatalogAssistantPayload | null
   } catch {
     return null;
   }
+}
+
+function createCatalogSearchTool(productRepository: ProductRepositoryPort) {
+  return tool(
+    async (input: { query?: string; limit?: number }) => {
+      const query = String(input?.query ?? "").trim();
+      const limit = clampLimit(input?.limit);
+      const products = await productRepository.search(query);
+      const results = products.slice(0, limit).map((product) => ({
+        id: product.id,
+        name: product.name,
+        category: product.category?.name ?? "Sem categoria",
+        price: product.price,
+        description: product.description,
+        attributes: product.attributes.map((attribute) => `${attribute.key}: ${attribute.value}`),
+      }));
+
+      return JSON.stringify(
+        {
+          query,
+          count: results.length,
+          results,
+        },
+        null,
+        2,
+      );
+    },
+    {
+      name: "search_catalog",
+      description: "Busca produtos relevantes no catalogo com base em uma consulta de texto.",
+      schema: {
+        type: "object",
+        properties: {
+          query: {
+            type: "string",
+            description: "Texto de busca usado para localizar produtos relevantes.",
+          },
+          limit: {
+            type: "integer",
+            minimum: 1,
+            maximum: 5,
+            description: "Numero maximo de produtos a retornar.",
+          },
+        },
+        required: ["query"],
+        additionalProperties: false,
+      },
+    },
+  );
+}
+
+function clampLimit(limit: number | undefined) {
+  if (typeof limit !== "number" || !Number.isFinite(limit)) {
+    return 5;
+  }
+
+  return Math.max(1, Math.min(5, Math.trunc(limit)));
 }
