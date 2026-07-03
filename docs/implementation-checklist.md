@@ -65,9 +65,9 @@ Legenda:
 
 ## Fase 7 - RAG com Groq
 
-- [ ] integrar `LangChain` no runtime da API ou em um servico dedicado;
-- [ ] conectar `Groq` como provedor de LLM;
-- [ ] definir modelo padrao (`llama-3.3-70b-versatile`) e fallback (`llama-3.1-8b-instant`);
-- [ ] expor uma rota de resposta assistida baseada em contexto do catalogo;
+- [x] integrar `LangChain` no runtime da API;
+- [x] conectar `Groq` como provedor de LLM;
+- [x] definir modelo padrao (`llama-3.3-70b-versatile`) e fallback (`llama-3.1-8b-instant`);
+- [x] expor uma rota de resposta assistida baseada em contexto do catalogo;
 - [ ] validar tool calling ou structured output, se a demo pedir;
 - [ ] revisar o roteiro da apresentacao com a camada de RAG em runtime.

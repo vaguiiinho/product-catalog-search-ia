@@ -45,6 +45,6 @@ O diagrama C4 principal fica em [c4-diagram.puml](../c4-diagram.puml) e cobre:
 ## Validacao
 
 - o frontend carrega catalogo e estados vazios;
-- a API expoe CRUD e indice semantico;
+- a API expoe CRUD, indice semantico e resposta assistida com Groq;
 - o worker executa um fluxo claro de ingestao, gera embeddings e persiste os vetores;
 - a documentacao aponta para a arquitetura real do repositorio.

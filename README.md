@@ -27,7 +27,7 @@ O sistema esta dividido em:
 
 - `Frontend` - experiencia publica, SEO, busca e detalhe de produto;
 - `Admin App` - gestao do catalogo;
-- `Catalog API` - CRUD, contratos e regras de negocio;
+- `Catalog API` - CRUD, contratos, regras de negocio e resposta assistida com Groq;
 - `Ingestion Worker` - importacao, normalizacao e reindexacao;
 - `PostgreSQL + pgvector` - dados e vetores;
 - `AI Pipeline` - recuperacao semantica, prompts e respostas assistidas.
