@@ -69,7 +69,7 @@ Legenda:
 - [x] conectar `Groq` como provedor de LLM;
 - [x] definir modelo padrao (`llama-3.3-70b-versatile`) e fallback (`llama-3.1-8b-instant`);
 - [x] expor uma rota de resposta assistida baseada em contexto do catalogo;
-- [ ] validar tool calling ou structured output, se a demo pedir;
+- [x] validar tool calling ou structured output, se a demo pedir;
 - [ ] revisar o roteiro da apresentacao com a camada de RAG em runtime.
 
 ## Fase 8 - Experiencia RAG no Frontend

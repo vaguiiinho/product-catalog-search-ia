@@ -3,7 +3,10 @@ import { ChatGroq } from "@langchain/groq";
 export const GROQ_CHAT_MODEL = Symbol("GROQ_CHAT_MODEL");
 
 export type ChatModelLike = {
-  invoke(messages: Array<{ role: string; content: string }>): Promise<{ content: unknown }>;
+  invoke(
+    messages: Array<{ role: string; content: string }>,
+    options?: Record<string, unknown>,
+  ): Promise<{ content: unknown }>;
 };
 
 export function createGroqChatModel(): ChatModelLike | null {
@@ -18,4 +21,3 @@ export function createGroqChatModel(): ChatModelLike | null {
     temperature: 0.2,
   });
 }
-

@@ -18,6 +18,12 @@ export type CatalogAssistantResponse = {
   sources: CatalogAssistantSource[];
 };
 
+type CatalogAssistantPayload = {
+  answer: string;
+  summary?: string;
+  highlights?: string[];
+};
+
 @Injectable()
 export class CatalogAssistantService {
   constructor(
@@ -47,21 +53,28 @@ export class CatalogAssistantService {
     }
 
     try {
-      const response = await this.chatModel.invoke([
+      const response = await this.chatModel.invoke(
+        [
+          {
+            role: "system",
+            content:
+              "Voce e um assistente de catalogo. Responda em portugues usando somente o contexto fornecido. Retorne um JSON valido com as chaves answer, summary e highlights. Se faltar informacao, diga isso de forma objetiva e nao invente produtos.",
+          },
+          {
+            role: "user",
+            content: context,
+          },
+        ],
         {
-          role: "system",
-          content:
-            "Voce e um assistente de catalogo. Responda em portugues, usando somente o contexto fornecido. Se faltar informacao, diga isso de forma objetiva e nao invente produtos.",
+          response_format: { type: "json_object" },
         },
-        {
-          role: "user",
-          content: context,
-        },
-      ]);
+      );
+
+      const payload = parseAssistantPayload(response.content);
 
       return {
         question: normalizedQuestion,
-        answer: messageContentToText(response.content) || fallbackAnswer(contextProducts, normalizedQuestion),
+        answer: payload?.answer?.trim() || fallbackAnswer(contextProducts, normalizedQuestion),
         model,
         retrievedCount: contextProducts.length,
         usedFallback: false,
@@ -152,3 +165,28 @@ function messageContentToText(content: unknown) {
   return String(content ?? "").trim();
 }
 
+function parseAssistantPayload(content: unknown): CatalogAssistantPayload | null {
+  const text = messageContentToText(content);
+
+  if (!text) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(text) as Partial<CatalogAssistantPayload>;
+
+    if (typeof parsed.answer !== "string") {
+      return null;
+    }
+
+    return {
+      answer: parsed.answer,
+      summary: typeof parsed.summary === "string" ? parsed.summary : undefined,
+      highlights: Array.isArray(parsed.highlights)
+        ? parsed.highlights.filter((item): item is string => typeof item === "string")
+        : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
