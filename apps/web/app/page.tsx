@@ -194,6 +194,7 @@ export default async function HomePage({
   searchParams: Promise<{ q?: string; ask?: string }>;
 }) {
   const { q, ask } = await searchParams;
+  const normalizedAsk = ask?.trim();
   let products: RankedProduct[] = [];
   let loadError = "";
   let assistantError = "";
@@ -205,9 +206,9 @@ export default async function HomePage({
     loadError = "Nao foi possivel carregar a API agora. Verifique se o backend esta rodando.";
   }
 
-  if (ask?.trim()) {
+  if (normalizedAsk) {
     try {
-      assistantResult = await askCatalogAssistant(ask.trim());
+      assistantResult = await askCatalogAssistant(normalizedAsk);
     } catch {
       assistantError = "Nao foi possivel consultar o assistente agora. Verifique se a API esta rodando.";
     }
@@ -304,11 +305,13 @@ export default async function HomePage({
               </div>
             ) : null}
           </article>
-        ) : (
+        ) : !assistantError ? (
           <p className="empty-state">
-            Envie uma pergunta para ver o contexto recuperado e a resposta assistida.
+            {normalizedAsk
+              ? "Nao foi possivel montar uma resposta assistida agora."
+              : "Envie uma pergunta para ver o contexto recuperado e a resposta assistida."}
           </p>
-        )}
+        ) : null}
       </section>
 
       {loadError ? (
