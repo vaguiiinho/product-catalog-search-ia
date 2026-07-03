@@ -2,17 +2,15 @@
 
 Projeto de portfolio para demonstrar um catalogo de produtos com busca semantica, frontend moderno, backend estruturado e documentacao arquitetural clara.
 
-## Objetivo
+## O que este projeto demonstra
 
-Construir uma aplicacao que permita:
+- experiencia publica com busca, detalhe de produto e SEO;
+- painel administrativo basico para gestao do catalogo;
+- API em `NestJS` com contratos claros;
+- pipeline de ingestao e base para indexacao semantica;
+- documentacao tecnica suficiente para explicar decisoes e trade-offs.
 
-- navegar por produtos;
-- pesquisar por texto e por intencao;
-- aplicar filtros estruturados;
-- administrar o catalogo;
-- mostrar uma arquitetura consistente e facil de explicar.
-
-## Stack proposta
+## Stack
 
 - `Next.js` para o frontend;
 - `NestJS` para a API e workers;
@@ -22,7 +20,7 @@ Construir uma aplicacao que permita:
 
 ## Arquitetura
 
-O sistema esta organizado em:
+O sistema esta dividido em:
 
 - `Frontend` - experiencia publica, SEO, busca e detalhe de produto;
 - `Admin App` - gestao do catalogo;
@@ -31,30 +29,16 @@ O sistema esta organizado em:
 - `PostgreSQL + pgvector` - dados e vetores;
 - `AI Pipeline` - recuperacao semantica e base para RAG.
 
-Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml).
+Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolidada em [docs/architecture-review.md](./docs/architecture-review.md).
 
-## Estrutura inicial
-
-O monorepo esta organizado em:
+## Estrutura do monorepo
 
 - `apps/web` - Next.js para o frontend publico e admin;
 - `apps/api` - NestJS para a API principal;
 - `apps/worker` - processamento em background;
 - `packages/shared` - utilitarios e contratos compartilhados no futuro.
 
-## Topologia
-
-O repositorio segue a estrategia de monorepo com apps independentes, pensando em um deploy futuro onde frontend, backend e worker possam rodar em ambientes diferentes.
-
-## Orquestracao de agentes
-
-Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e sao organizados por responsabilidade tecnica:
-
-- `architect` coordena decisoes de alto nivel;
-- `backend` e `nestjs-backend` cobrem dominio, use cases e API;
-- `nextjs-frontend` cobre a experiencia em Next.js;
-- `ingestion-worker`, `ai-rag` e `data-vector-store` cobrem as demais camadas;
-- `documentation` transforma decisoes em PRD, ADRs e checklist.
+O repositorio adota apps independentes para manter o deploy futuro desacoplado, mesmo durante o desenvolvimento local.
 
 ## Documentacao
 
@@ -71,15 +55,7 @@ Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e sao 
 
 ## Agentes
 
-Os agentes do projeto estao em [`.agents/README.md`](./.agents/README.md) e cobrem:
-
-- arquitetura;
-- frontend;
-- API;
-- ingestion worker;
-- IA e RAG;
-- dados e vector store;
-- documentacao.
+Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e cobrem arquitetura, frontend, API, worker, IA, vector store e documentacao.
 
 ## Escopo do MVP
 
@@ -98,10 +74,6 @@ Os agentes do projeto estao em [`.agents/README.md`](./.agents/README.md) e cobr
 - multi-loja;
 - analytics completo.
 
-## Proximo passo
-
-Siga a checklist em [docs/implementation-checklist.md](./docs/implementation-checklist.md) para acompanhar as fases e os artefatos de validacao.
-
 ## Como rodar
 
 - instalar dependencias: `corepack pnpm install`
@@ -111,3 +83,7 @@ Siga a checklist em [docs/implementation-checklist.md](./docs/implementation-che
 - iniciar frontend: `npm run dev:web`
 - iniciar backend: `npm run dev:api`
 - iniciar worker: `npm run dev:worker`
+
+## Proximo passo
+
+Use a checklist em [docs/implementation-checklist.md](./docs/implementation-checklist.md) como guia da evolucao do projeto.
