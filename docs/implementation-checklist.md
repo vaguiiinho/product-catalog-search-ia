@@ -71,3 +71,11 @@ Legenda:
 - [x] expor uma rota de resposta assistida baseada em contexto do catalogo;
 - [ ] validar tool calling ou structured output, se a demo pedir;
 - [ ] revisar o roteiro da apresentacao com a camada de RAG em runtime.
+
+## Fase 8 - Experiencia RAG no Frontend
+
+- [x] exibir a resposta assistida na homepage;
+- [x] mostrar fontes recuperadas e fallback local;
+- [x] manter a busca do catalogo e a pergunta ao assistente no mesmo fluxo;
+- [ ] validar estados vazios e erros do assistente em navegacao real;
+- [ ] revisar a copy final do frontend com a camada de RAG visivel.

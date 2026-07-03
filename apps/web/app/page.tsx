@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { askCatalogAssistant } from "@/lib/assistant";
 import { getProducts } from "@/lib/products";
 import Link from "next/link";
 
@@ -27,6 +28,14 @@ function formatPrice(price: number) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
+  }).format(price);
+}
+
+function formatShortPrice(price: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
   }).format(price);
 }
 
@@ -182,16 +191,26 @@ function ProductGrid({
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; ask?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, ask } = await searchParams;
   let products: RankedProduct[] = [];
   let loadError = "";
+  let assistantError = "";
+  let assistantResult: Awaited<ReturnType<typeof askCatalogAssistant>> | null = null;
 
   try {
     products = rankProducts(await getProducts(q), q);
   } catch {
     loadError = "Nao foi possivel carregar a API agora. Verifique se o backend esta rodando.";
+  }
+
+  if (ask?.trim()) {
+    try {
+      assistantResult = await askCatalogAssistant(ask.trim());
+    } catch {
+      assistantError = "Nao foi possivel consultar o assistente agora. Verifique se a API esta rodando.";
+    }
   }
 
   return (
@@ -227,6 +246,67 @@ export default async function HomePage({
             Ordenando resultados por relevancia para <strong>{q}</strong>.
           </p>
         ) : null}
+      </section>
+
+      <section className="assistant-panel">
+        <div className="section-header">
+          <p className="eyebrow">Assistente</p>
+          <h2>Pergunte sobre o catalogo com a camada de RAG.</h2>
+          <p className="section-copy">
+            Quando a chave da Groq estiver configurada, a resposta vem do modelo. Sem chave, a
+            interface mostra o fallback local com o mesmo contexto recuperado do catalogo.
+          </p>
+        </div>
+
+        <form className="assistant-form" method="get">
+          <label className="sr-only" htmlFor="ask">
+            Perguntar ao assistente
+          </label>
+          {q ? <input type="hidden" name="q" value={q} /> : null}
+          <input
+            id="ask"
+            name="ask"
+            defaultValue={ask}
+            placeholder="Ex: qual produto parece melhor para corrida urbana?"
+          />
+          <button type="submit">Perguntar</button>
+        </form>
+
+        {assistantError ? <p className="empty-state">{assistantError}</p> : null}
+
+        {assistantResult ? (
+          <article className="assistant-result">
+            <div className="assistant-result-top">
+              <div>
+                <p className="eyebrow">Resposta assistida</p>
+                <h3>{assistantResult.question}</h3>
+              </div>
+              <span className="assistant-pill">
+                {assistantResult.usedFallback ? "Fallback local" : assistantResult.model}
+              </span>
+            </div>
+            <p className="assistant-answer">{assistantResult.answer}</p>
+            <div className="assistant-meta">
+              <span>{assistantResult.retrievedCount} itens recuperados</span>
+              <span>{assistantResult.sources.length} fontes citadas</span>
+            </div>
+            {assistantResult.sources.length > 0 ? (
+              <div className="assistant-sources">
+                {assistantResult.sources.map((source) => (
+                  <article key={source.id} className="assistant-source-card">
+                    <strong>{source.name}</strong>
+                    <span>{source.category}</span>
+                    <span>{formatShortPrice(source.price)}</span>
+                  </article>
+                ))}
+              </div>
+            ) : null}
+          </article>
+        ) : (
+          <p className="empty-state">
+            Envie uma pergunta para ver o contexto recuperado e a resposta assistida.
+          </p>
+        )}
       </section>
 
       {loadError ? (

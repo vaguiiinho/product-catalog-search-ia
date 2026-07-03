@@ -6,6 +6,7 @@ Frontend public da aplicacao em Next.js.
 
 - catalogo publico;
 - busca semantica;
+- resposta assistida com fontes recuperadas;
 - pagina de produto;
 - estados de carregamento, vazio e erro;
 - SEO e experiencia responsiva.
