@@ -25,6 +25,28 @@ async function main() {
 }
 
 void main().catch((error) => {
+  if (isConnectionRefused(error)) {
+    console.error(
+      `[worker] API indisponivel em ${process.env.INGESTION_API_URL ?? "http://localhost:3001"}.
+Inicie a API com \`npm run dev:api\` ou defina \`INGESTION_API_URL\` para apontar para uma instancia ativa.`,
+    );
+  }
+
   console.error("[worker] failed", error);
   process.exitCode = 1;
 });
+
+function isConnectionRefused(error: unknown) {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const cause = "cause" in error ? (error as { cause?: unknown }).cause : undefined;
+
+  return Boolean(
+    cause &&
+      typeof cause === "object" &&
+      "code" in cause &&
+      (cause as { code?: unknown }).code === "ECONNREFUSED",
+  );
+}
