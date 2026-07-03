@@ -6,7 +6,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Catalogo publico com busca semantica simulada, ranking heuristico e painel administrativo.",
+    "Catalogo publico com busca semantica, assistente em runtime e painel administrativo.",
 };
 
 const features = [
@@ -226,7 +226,8 @@ export default async function HomePage({
         <h1>Catalogo de produtos com busca semantica e integracao simulada de IA.</h1>
         <p className="lead">
           Next.js no frontend, NestJS na API, PostgreSQL + pgvector nos dados e um worker que
-          gera embeddings para demonstrar a orquestracao de LLM e RAG sobre uma base existente.
+          gera embeddings para demonstrar a orquestracao de RAG em runtime sobre uma base
+          existente.
         </p>
 
         <form className="search-box" method="get">
@@ -251,10 +252,11 @@ export default async function HomePage({
       <section className="assistant-panel">
         <div className="section-header">
           <p className="eyebrow">Assistente</p>
-          <h2>Pergunte sobre o catalogo com a camada de RAG.</h2>
+          <h2>Pergunte sobre o catalogo com a camada de RAG em runtime.</h2>
           <p className="section-copy">
-            Quando a chave da Groq estiver configurada, a resposta vem do modelo. Sem chave, a
-            interface mostra o fallback local com o mesmo contexto recuperado do catalogo.
+            O assistente recupera contexto do catalogo, aciona o modelo Groq quando configurado e
+            devolve uma resposta estruturada. Sem chave, a interface mostra o fallback local com o
+            mesmo contexto recuperado do catalogo.
           </p>
         </div>
 

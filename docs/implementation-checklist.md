@@ -78,7 +78,7 @@ Legenda:
 - [x] mostrar fontes recuperadas e fallback local;
 - [x] manter a busca do catalogo e a pergunta ao assistente no mesmo fluxo;
 - [ ] validar estados vazios e erros do assistente em navegacao real;
-- [ ] revisar a copy final do frontend com a camada de RAG visivel.
+- [x] revisar a copy final do frontend com a camada de RAG visivel.
 
 ## Fase 9 - Agent Fino
 

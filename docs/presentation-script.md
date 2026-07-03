@@ -4,7 +4,7 @@
 
 - Apresentar o produto como um catalogo com busca semantica e arquitetura explicita.
 - Explicar que o foco e portfolio tecnico, nao e-commerce completo.
-- Dizer que a demo simula a integracao de `LLM`, `RAG` e `pgvector` em um sistema que ja existia, para tornar a narrativa realista sem depender de um servico externo.
+- Dizer que a demo apresenta um assistente RAG em runtime sobre um sistema que ja existia, para tornar a narrativa realista sem depender de um servico externo.
 
 ## 2. Problema
 
@@ -24,7 +24,7 @@
 - Navegar ate um produto e mostrar dados, atributos e contexto.
 - Mostrar que o worker gera embeddings, consolida o documento semantico e grava os vetores em `pgvector`.
 - Apontar o fluxo de ingestao e a relacao com o endpoint semantico.
-- Reforcar que `LangChain` + `Groq` e a combinacao recomendada para a camada de `LLM` e `RAG` sobre a base existente.
+- Reforcar que `LangChain` + `Groq` e a combinacao recomendada para a camada de `RAG` em runtime sobre a base existente.
 
 ## 5. Decisoes tecnicas
 
