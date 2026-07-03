@@ -1,4 +1,7 @@
+import { loadApiEnv } from "../src/bootstrap-env";
 import { PrismaClient, Prisma } from "@prisma/client";
+
+loadApiEnv();
 
 const prisma = new PrismaClient();
 
