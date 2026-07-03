@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { CatalogAssistantResponse, CatalogAssistantService } from "../infrastructure/catalog-assistant.service";
+import { CatalogAssistantResponse, CatalogAgentService } from "../infrastructure/catalog-assistant.service";
 
 @Injectable()
-export class AskCatalogAssistantUseCase {
-  constructor(private readonly catalogAssistantService: CatalogAssistantService) {}
+export class AskCatalogAgentUseCase {
+  constructor(private readonly catalogAgentService: CatalogAgentService) {}
 
   execute(question: string): Promise<CatalogAssistantResponse> {
-    return this.catalogAssistantService.answerQuestion(question);
+    return this.catalogAgentService.answerQuestion(question);
   }
 }
-

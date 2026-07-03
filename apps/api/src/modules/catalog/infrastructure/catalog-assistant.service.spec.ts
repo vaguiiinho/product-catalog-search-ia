@@ -1,7 +1,7 @@
-import { CatalogAssistantService } from "./catalog-assistant.service";
+import { CatalogAgentService } from "./catalog-assistant.service";
 import { ProductRepositoryPort } from "../domain/product.repository.port";
 
-describe("CatalogAssistantService", () => {
+describe("CatalogAgentService", () => {
   it("falls back when the model is unavailable", async () => {
     const repository: ProductRepositoryPort = {
       findAll: jest.fn(),
@@ -26,7 +26,7 @@ describe("CatalogAssistantService", () => {
       create: jest.fn(),
     };
 
-    const service = new CatalogAssistantService(repository, null);
+    const service = new CatalogAgentService(repository, null);
     const result = await service.answerQuestion("tenis para corrida");
 
     expect(result.usedFallback).toBe(true);
@@ -68,7 +68,7 @@ describe("CatalogAssistantService", () => {
       }),
     };
 
-    const service = new CatalogAssistantService(repository, chatModel);
+    const service = new CatalogAgentService(repository, chatModel);
     const result = await service.answerQuestion("tenis para corrida");
 
     expect(chatModel.invoke).toHaveBeenCalledWith(
@@ -134,7 +134,7 @@ describe("CatalogAssistantService", () => {
         }),
     };
 
-    const service = new CatalogAssistantService(repository, chatModel);
+    const service = new CatalogAgentService(repository, chatModel);
     const result = await service.answerQuestion("tenis para corrida");
 
     expect(chatModel.bindTools).toHaveBeenCalledTimes(1);

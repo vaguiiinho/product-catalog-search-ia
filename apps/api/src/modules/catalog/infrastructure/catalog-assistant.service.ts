@@ -27,7 +27,7 @@ type CatalogAssistantPayload = {
 };
 
 @Injectable()
-export class CatalogAssistantService {
+export class CatalogAgentService {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: ProductRepositoryPort,

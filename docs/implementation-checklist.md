@@ -79,3 +79,11 @@ Legenda:
 - [x] manter a busca do catalogo e a pergunta ao assistente no mesmo fluxo;
 - [ ] validar estados vazios e erros do assistente em navegacao real;
 - [ ] revisar a copy final do frontend com a camada de RAG visivel.
+
+## Fase 9 - Agent Fino
+
+- [x] formalizar o agent fino na API;
+- [x] manter ingestao e persistencia no worker;
+- [x] restringir o agent a retrieval, tool calling e resposta final;
+- [ ] revisar se os nomes publicos precisam refletir "agent" no frontend;
+- [ ] validar se a documentacao final evita chamar esse fluxo de agent autonomo.

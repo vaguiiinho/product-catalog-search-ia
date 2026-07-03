@@ -43,6 +43,7 @@ Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolida
 
 O repositorio adota apps independentes para manter o deploy futuro desacoplado, mesmo durante o desenvolvimento local.
 O fluxo de busca semantica atual deixa explicito que o worker gera embeddings e persiste os vetores. Quando a camada de `RAG` for ativada no runtime, a combinacao recomendada para este repo e `LangChain` + `Groq`, mantendo a stack em TypeScript. No MVP, isso continua demonstrado com embeddings deterministicos locais e `pgvector`, sem acoplar a demo a provedores externos.
+Na API, a implementacao usa um agent fino para recuperar contexto, chamar tool e compor a resposta final.
 
 ## Documentacao
 
