@@ -61,6 +61,8 @@ Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e sao 
 - [PRD](./docs/PRD.md)
 - [Checklist de implementacao](./docs/implementation-checklist.md)
 - [Documentacao do projeto](./docs/README.md)
+- [Revisao de arquitetura](./docs/architecture-review.md)
+- [Roteiro de apresentacao](./docs/presentation-script.md)
 - [ADR 0001 - stack](./docs/adr/0001-stack-nextjs-nestjs-pgvector.md)
 - [ADR 0002 - busca semantica](./docs/adr/0002-semantic-search-with-llamaindex.md)
 - [ADR 0003 - documentacao como entrega](./docs/adr/0003-documentation-and-deliverables.md)
@@ -98,7 +100,7 @@ Os agentes do projeto estao em [`.agents/README.md`](./.agents/README.md) e cobr
 
 ## Proximo passo
 
-Siga a checklist em [docs/implementation-checklist.md](./docs/implementation-checklist.md) para iniciar a implementacao por fases.
+Siga a checklist em [docs/implementation-checklist.md](./docs/implementation-checklist.md) para acompanhar as fases e os artefatos de validacao.
 
 ## Como rodar
 

@@ -46,8 +46,8 @@ Legenda:
 
 ## Fase 5 - Portfolio
 
-- [ ] revisar arquitetura e diagramas;
-- [ ] atualizar README principal;
-- [ ] documentar decisoes finais;
-- [ ] preparar roteiro de apresentacao;
-- [ ] validar fluxo completo de ponta a ponta.
+- [x] revisar arquitetura e diagramas;
+- [x] atualizar README principal;
+- [x] documentar decisoes finais;
+- [x] preparar roteiro de apresentacao;
+- [x] validar fluxo completo de ponta a ponta.
