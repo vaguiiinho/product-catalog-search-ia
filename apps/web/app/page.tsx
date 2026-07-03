@@ -5,13 +5,13 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Home",
   description:
-    "Catalogo público com busca textual, ranking heuristico e navegação para o painel administrativo.",
+    "Catalogo publico com busca semantica simulada, ranking heuristico e painel administrativo.",
 };
 
 const features = [
   {
     title: "Busca semantica",
-    description: "Encontre produtos por intencao, nao apenas por palavras exatas.",
+    description: "Encontre produtos por intencao usando embeddings locais e pgvector.",
   },
   {
     title: "Catalogo pronto para portfolio",
@@ -130,7 +130,7 @@ function ProductGrid({
         <p className="empty-state">
           {query
             ? `Nao encontramos resultados para "${query}". Tente outra busca.`
-            : "O frontend ja conversa com a API. Assim que o seed rodar, os cards aparecem aqui."}
+            : "O frontend ja conversa com a API e exibe a base pronta para a demo de embeddings e pgvector."}
         </p>
       </section>
     );
@@ -142,8 +142,8 @@ function ProductGrid({
         <p className="eyebrow">Catalogo</p>
         <h2>Produtos carregados da API NestJS.</h2>
         <p className="section-copy">
-          A home agora mostra dados reais do backend, o que fecha o primeiro passo do fluxo
-          público do catálogo.
+          A home mostra a base real do backend e a narrativa da demo com busca semantica
+          simulada sobre sistema existente.
         </p>
       </div>
 
@@ -204,10 +204,10 @@ export default async function HomePage({
           </Link>
         </div>
         <p className="eyebrow">Product Catalog Search IA</p>
-        <h1>Catalogo de produtos com busca semantica e arquitetura explicita.</h1>
+        <h1>Catalogo de produtos com busca semantica e integracao simulada de IA.</h1>
         <p className="lead">
-          Next.js no frontend, NestJS na API, PostgreSQL + pgvector nos dados e uma camada de
-          IA pronta para demonstrar o fluxo de consulta por intencao.
+          Next.js no frontend, NestJS na API, PostgreSQL + pgvector nos dados e um worker que
+          gera embeddings para demonstrar a orquestracao de LLM e RAG sobre uma base existente.
         </p>
 
         <form className="search-box" method="get">

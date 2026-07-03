@@ -4,7 +4,7 @@ export default function Loading() {
       <section className="hero">
         <p className="eyebrow">Carregando</p>
         <h1>Preparando o catalogo.</h1>
-        <p className="lead">A interface está montando os dados mais recentes da API.</p>
+        <p className="lead">A interface esta montando os dados mais recentes da API para a demo.</p>
       </section>
     </main>
   );

@@ -10,10 +10,12 @@ export const metadata: Metadata = {
     default: "Catalogo com Busca Semantica",
     template: "%s | Catalogo com Busca Semantica",
   },
-  description: "Projeto de portfolio com Next.js, NestJS e busca semantica.",
+  description:
+    "Projeto de portfolio com Next.js, NestJS, pgvector e uma demo simulada de LLM/RAG sobre um sistema existente.",
   openGraph: {
     title: "Catalogo com Busca Semantica",
-    description: "Projeto de portfolio com Next.js, NestJS e busca semantica.",
+    description:
+      "Projeto de portfolio com Next.js, NestJS, pgvector e uma demo simulada de LLM/RAG sobre um sistema existente.",
     url: siteUrl,
     siteName: "Catalogo com Busca Semantica",
     locale: "pt_BR",

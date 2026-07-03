@@ -7,7 +7,7 @@ import { getProducts, type Product } from "@/lib/products";
 export const metadata: Metadata = {
   title: "Admin",
   description:
-    "Painel administrativo básico para criar produtos e inspecionar o catálogo recente.",
+    "Painel administrativo basico para criar produtos e inspecionar o catalogo recente.",
 };
 
 function formatPrice(price: number) {
@@ -59,7 +59,8 @@ function AdminProductList({ products }: { products: Product[] }) {
         <p className="eyebrow">Catalogo recente</p>
         <h2>Ultimos produtos da base.</h2>
         <p className="section-copy">
-          O painel mostra o estado atual do catálogo e permite criar novos itens sem sair da UI.
+          O painel mostra o estado atual do catalogo e permite criar novos itens sem sair da UI,
+          mantendo a mesma base usada na demo de embeddings e pgvector.
         </p>
       </div>
 
@@ -110,8 +111,8 @@ export default async function AdminPage({
         <p className="eyebrow">Admin</p>
         <h1>Gerencie o catalogo com uma interface simples e util.</h1>
         <p className="lead">
-          Criação de produtos diretamente no catálogo principal, com persistência em PostgreSQL via
-          API NestJS.
+          Crie produtos diretamente no catalogo principal, com persistencia em PostgreSQL via API
+          NestJS, para alimentar a demo de busca semantica simulada.
         </p>
 
         {created ? <p className="success-banner">Produto criado com sucesso.</p> : null}
@@ -123,8 +124,8 @@ export default async function AdminPage({
           <p className="eyebrow">Novo produto</p>
           <h2>Criar item no catálogo.</h2>
           <p className="section-copy">
-            A submissão acontece via server action, então o browser não precisa falar direto com a
-            API.
+            A submissao acontece via server action, entao o browser nao precisa falar direto com a
+            API nem com nenhuma camada de LLM.
           </p>
         </div>
 

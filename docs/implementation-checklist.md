@@ -59,6 +59,6 @@ Legenda:
 - [x] revisar o roteiro de apresentacao com a nova proposta;
 - [x] deixar explicito que o worker faz embeddings e persistencia vetorial;
 - [x] deixar explicito que `LlamaIndex` ou `LangChain` podem orquestrar a integracao LLM/RAG sobre o sistema existente;
-- [ ] revisar a copy do frontend para evitar promessas de integracao real com LLM externo;
+- [x] revisar a copy do frontend para evitar promessas de integracao real com LLM externo;
 - [ ] validar se a demonstracao verbal destaca claramente o papel do worker, embeddings e vetor persistido;
 - [ ] fazer uma passagem final de consistencia entre checklist, roteiro e arquitetura.
