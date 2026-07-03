@@ -85,5 +85,5 @@ Legenda:
 - [x] formalizar o agent fino na API;
 - [x] manter ingestao e persistencia no worker;
 - [x] restringir o agent a retrieval, tool calling e resposta final;
-- [ ] revisar se os nomes publicos precisam refletir "agent" no frontend;
-- [ ] validar se a documentacao final evita chamar esse fluxo de agent autonomo.
+- [x] manter o nome publico como "assistente" no frontend;
+- [x] validar se a documentacao final evita chamar esse fluxo de agent autonomo.
