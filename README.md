@@ -17,8 +17,8 @@ O foco da demo e mostrar uma integracao simulada de `LLM`, `RAG` e `pgvector` em
 - `Next.js` para o frontend;
 - `NestJS` para a API e workers;
 - `PostgreSQL + pgvector` para persistencia e busca vetorial;
-- `LlamaIndex` como referencia conceitual da camada de ingestao e retrieval;
-- `LangChain` apenas se houver necessidade futura de agente.
+- `LlamaIndex` como camada preferencial de orquestracao da integracao LLM/RAG no sistema existente;
+- `LangChain` apenas se houver necessidade futura de agente ou ferramentas.
 
 ## Arquitetura
 
@@ -41,7 +41,7 @@ Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolida
 - `packages/shared` - utilitarios e contratos compartilhados no futuro.
 
 O repositorio adota apps independentes para manter o deploy futuro desacoplado, mesmo durante o desenvolvimento local.
-O fluxo de busca semantica atual simula a integracao com `LLM` e `RAG` usando `pgvector` e embeddings deterministicos locais, o que ajuda a demonstrar a arquitetura sem acoplar o MVP a provedores externos.
+O fluxo de busca semantica atual deixa explicito que o worker gera embeddings e persiste os vetores, enquanto `LlamaIndex` ou `LangChain` podem orquestrar a camada de `LLM` e `RAG` sobre a base existente. No MVP, isso e demonstrado com embeddings deterministicos locais e `pgvector`, sem acoplar a demo a provedores externos.
 
 ## Documentacao
 

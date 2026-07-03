@@ -18,7 +18,8 @@ Processamento em background para ingestao e reindexacao.
 - o worker gera embeddings deterministicos locais para o MVP;
 - os embeddings sao persistidos na API em uma tabela `pgvector`;
 - o pipeline atual serve como esqueleto de ingestao, embedding e reindexacao;
-- a demo usa esse fluxo para simular a integracao de `LLM` e `RAG` em um sistema ja existente.
+- a demo usa esse fluxo para simular a integracao de `LLM` e `RAG` em um sistema ja existente;
+- `LlamaIndex` ou `LangChain` entram como camada de orquestracao, se a evolucao da demo exigir.
 
 ## Execucao local
 

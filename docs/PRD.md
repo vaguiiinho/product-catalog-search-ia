@@ -67,10 +67,10 @@ Construir um catalogo de produtos com:
 - `Next.js` no frontend;
 - `NestJS` na API e em workers;
 - `PostgreSQL + pgvector` para persistencia e busca vetorial;
-- `LlamaIndex` como referencia conceitual da camada de ingestao e retrieval;
+- `LlamaIndex` como camada preferencial de orquestracao da integracao LLM/RAG sobre o sistema existente;
 - `LangChain` apenas se houver necessidade de agente depois.
 
-No MVP, a integracao e demonstrada por um fluxo interno com embeddings deterministicos e persistencia vetorial, representando a camada de `LLM` e `RAG` sem exigir um provedor externo real.
+No MVP, o worker gera embeddings deterministicos e persiste os vetores em `pgvector`, enquanto `LlamaIndex` ou `LangChain` representam a camada de orquestracao de `LLM` e `RAG` sobre a base existente, sem exigir um provedor externo real.
 
 ## Topologia do repositorio
 

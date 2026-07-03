@@ -10,7 +10,7 @@ Consolidar o desenho atual do produto para portfolio e deixar explicito o que ja
 - `NestJS` concentra CRUD, contratos e regras de catalogo.
 - `apps/worker` prepara documentos de ingestao, embeddings simulados e reindexacao.
 - `PostgreSQL + pgvector` permanece como destino natural para persistencia e busca vetorial.
-- `LlamaIndex` e a base conceitual da camada de IA e retrieval.
+- `LlamaIndex` ou `LangChain` representam a camada de orquestracao de `LLM` e `RAG`.
 - a demo representa `LLM` e `RAG` de forma simulada sobre um sistema ja existente, sem acoplar o MVP a um provedor externo.
 
 ## Diagrama
