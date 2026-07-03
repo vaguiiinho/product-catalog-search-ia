@@ -55,6 +55,25 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
     }
 
     const queryEmbedding = embedText(normalizedQuery);
+    const searchTerms = tokenizeSearchTerms(normalizedQuery);
+    const matchTerms = searchTerms.length > 0 ? searchTerms : [normalizedQuery];
+    const termConditions = matchTerms.map((term) => Prisma.sql`
+          (
+            unaccent(p.name) ILIKE '%' || unaccent(${term}) || '%' OR
+            unaccent(p.description) ILIKE '%' || unaccent(${term}) || '%' OR
+            unaccent(COALESCE(c.name, '')) ILIKE '%' || unaccent(${term}) || '%' OR
+            EXISTS (
+              SELECT 1
+              FROM "ProductAttribute" pa_term
+              WHERE pa_term."productId" = p.id
+                AND (
+                  unaccent(pa_term.key) ILIKE '%' || unaccent(${term}) || '%' OR
+                  unaccent(pa_term.value) ILIKE '%' || unaccent(${term}) || '%'
+                )
+            ) OR
+            unaccent(COALESCE(sd.semantic_text, '')) ILIKE '%' || unaccent(${term}) || '%'
+          )
+        `);
 
     const rows = await this.prisma.$queryRaw<
       {
@@ -88,16 +107,7 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
             AND (pa.key ILIKE '%' || qv.query || '%' OR pa.value ILIKE '%' || qv.query || '%')
         ) attr ON true
         WHERE
-          unaccent(p.name) ILIKE '%' || unaccent(qv.query) || '%' OR
-          unaccent(p.description) ILIKE '%' || unaccent(qv.query) || '%' OR
-          unaccent(COALESCE(c.name, '')) ILIKE '%' || unaccent(qv.query) || '%' OR
-          EXISTS (
-            SELECT 1
-            FROM "ProductAttribute" pa
-            WHERE pa."productId" = p.id
-              AND (unaccent(pa.key) ILIKE '%' || unaccent(qv.query) || '%' OR unaccent(pa.value) ILIKE '%' || unaccent(qv.query) || '%')
-          ) OR
-          unaccent(sd.semantic_text) ILIKE '%' || unaccent(qv.query) || '%'
+          ${Prisma.join(termConditions, " OR ")}
         ORDER BY "hybridScore" DESC, p."createdAt" DESC
         LIMIT 20
       )
@@ -214,3 +224,35 @@ function slugify(value: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+function tokenizeSearchTerms(query: string) {
+  const tokens = query.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+
+  return tokens.filter((token) => token.length > 2 && !STOPWORDS.has(token));
+}
+
+const STOPWORDS = new Set([
+  "qual",
+  "quais",
+  "como",
+  "para",
+  "pra",
+  "com",
+  "sem",
+  "sobre",
+  "mais",
+  "menos",
+  "produto",
+  "produtos",
+  "melhor",
+  "pior",
+  "parece",
+  "parecer",
+  "ser",
+  "um",
+  "uma",
+  "os",
+  "as",
+  "o",
+  "a",
+]);
