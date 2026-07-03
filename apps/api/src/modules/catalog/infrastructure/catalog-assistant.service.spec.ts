@@ -76,9 +76,6 @@ describe("CatalogAgentService", () => {
         expect.objectContaining({ role: "system" }),
         expect.objectContaining({ role: "user" }),
       ]),
-      expect.objectContaining({
-        response_format: { type: "json_object" },
-      }),
     );
     expect(result.usedFallback).toBe(false);
     expect(result.answer).toBe("O tenis leve e o melhor ajuste para corrida urbana.");

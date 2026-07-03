@@ -72,9 +72,6 @@ export class CatalogAgentService {
             content: context,
           },
         ],
-        {
-          response_format: { type: "json_object" },
-        },
       );
 
       const toolCalls = firstResponse.tool_calls ?? [];
@@ -117,9 +114,6 @@ export class CatalogAgentService {
               firstResponse,
               ...toolMessages,
             ],
-            {
-              response_format: { type: "json_object" },
-            },
           );
 
           const payload = parseAssistantPayload(finalResponse.content);
@@ -145,7 +139,13 @@ export class CatalogAgentService {
         usedFallback: false,
         sources: contextProducts.map(mapSource),
       };
-    } catch {
+    } catch (error) {
+      console.error("[catalog-assistant] groq request failed", {
+        model,
+        question: normalizedQuestion,
+        error: serializeError(error),
+      });
+
       return {
         question: normalizedQuestion,
         answer: fallbackAnswer(contextProducts, normalizedQuestion),
@@ -303,6 +303,24 @@ function createCatalogSearchTool(productRepository: ProductRepositoryPort) {
       },
     },
   );
+}
+
+function serializeError(error: unknown) {
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    };
+  }
+
+  if (typeof error === "object" && error !== null) {
+    return JSON.parse(
+      JSON.stringify(error, (_, value) => (typeof value === "bigint" ? value.toString() : value)),
+    );
+  }
+
+  return String(error);
 }
 
 function clampLimit(limit: number | undefined) {
