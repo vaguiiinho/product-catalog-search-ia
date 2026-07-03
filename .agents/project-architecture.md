@@ -9,8 +9,9 @@ Build a portfolio-ready product catalog with semantic search, clear architecture
 - `Next.js` for the frontend.
 - `NestJS` for the backend API and workers.
 - `PostgreSQL + pgvector` for persistence and vector search.
-- `LlamaIndex` for ingestion, retrieval and RAG.
-- `LangChain` only if an agent layer becomes necessary later.
+- `LangChain` for retrieval orchestration and RAG in the TypeScript stack.
+- `Groq` as the LLM provider for assistant responses.
+- `LlamaIndex` only as a future alternative if a Python-oriented ingestion or retrieval layer becomes necessary.
 
 ## Repository strategy
 
@@ -26,7 +27,7 @@ Build a portfolio-ready product catalog with semantic search, clear architecture
 - Admin area for product management.
 - Backend API for domain rules and data contracts.
 - Worker layer for ingestion, normalization and reindexing.
-- AI layer for semantic retrieval and optional answer generation.
+- AI layer for semantic retrieval, tool calling and optional answer generation.
 - Data layer for catalog records and embeddings.
 
 ## C4 mapping
@@ -45,6 +46,7 @@ Build a portfolio-ready product catalog with semantic search, clear architecture
 - Domain stays pure and framework-agnostic.
 - Infrastructure isolates Prisma, storage and external services.
 - Search should combine structured filters with semantic retrieval.
+- The worker stays outside the agent layer: it prepares documents, embeddings and reindexing, but does not orchestrate LLM calls.
 - Apps must communicate through explicit contracts, not internal runtime imports.
 
 ## Documentation rules
