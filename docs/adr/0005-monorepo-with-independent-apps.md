@@ -17,7 +17,7 @@ Adotar um monorepo com apps independentes:
 - `apps/worker` para processamento em background;
 - `packages/shared` apenas para utilitarios ou contratos puros, quando necessario.
 
-Cada app tera suas dependencias, scripts e ciclo de build/producao próprios.
+Cada app tera suas dependencias, scripts e ciclo de build/producao proprios.
 
 ## Alternativas consideradas
 
@@ -42,4 +42,3 @@ Cada app tera suas dependencias, scripts e ciclo de build/producao próprios.
 ## Observacoes
 
 O root do repositorio fica responsavel apenas por workspace, tooling comum e scripts de orquestracao.
-

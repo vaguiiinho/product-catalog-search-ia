@@ -4,6 +4,7 @@
 
 - Apresentar o produto como um catalogo com busca semantica e arquitetura explicita.
 - Explicar que o foco e portfolio tecnico, nao e-commerce completo.
+- Dizer que a demo simula a integracao de `LLM`, `RAG` e `pgvector` em um sistema que ja existia, para tornar a narrativa realista sem depender de um servico externo.
 
 ## 2. Problema
 
@@ -13,7 +14,7 @@
 ## 3. Solucao
 
 - Mostrar `Next.js` no frontend, `NestJS` na API e `PostgreSQL + pgvector` na base.
-- Explicar que o worker prepara a ingestao e a futura indexacao semantica.
+- Explicar que o worker prepara a ingestao e a indexacao semantica, representando a camada de IA/RAG no fluxo demonstrado.
 - Destacar que a documentacao faz parte da entrega.
 
 ## 4. Demo
@@ -27,7 +28,7 @@
 
 - Monorepo com apps independentes.
 - Contratos HTTP entre frontend, API e worker.
-- `LlamaIndex` como base da camada de retrieval.
+- `LlamaIndex` como referencia conceitual da camada de retrieval.
 - `PostgreSQL + pgvector` para manter a solucao simples e demonstravel.
 
 ## 6. Fechamento

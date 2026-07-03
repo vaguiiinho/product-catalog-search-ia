@@ -10,12 +10,14 @@ Projeto de portfolio para demonstrar um catalogo de produtos com busca semantica
 - pipeline de ingestao e base para indexacao semantica;
 - documentacao tecnica suficiente para explicar decisoes e trade-offs.
 
+O foco da demo e mostrar uma integracao simulada de `LLM`, `RAG` e `pgvector` em cima de um sistema ja existente, sem depender de servicos externos reais no MVP.
+
 ## Stack
 
 - `Next.js` para o frontend;
 - `NestJS` para a API e workers;
 - `PostgreSQL + pgvector` para persistencia e busca vetorial;
-- `LlamaIndex` para ingestao, retrieval e RAG;
+- `LlamaIndex` como referencia conceitual da camada de ingestao e retrieval;
 - `LangChain` apenas se houver necessidade futura de agente.
 
 ## Arquitetura
@@ -27,7 +29,7 @@ O sistema esta dividido em:
 - `Catalog API` - CRUD, contratos e regras de negocio;
 - `Ingestion Worker` - importacao, normalizacao e reindexacao;
 - `PostgreSQL + pgvector` - dados e vetores;
-- `AI Pipeline` - recuperacao semantica e base para RAG.
+- `AI Pipeline` - recuperacao semantica e base conceitual para RAG.
 
 Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolidada em [docs/architecture-review.md](./docs/architecture-review.md).
 
@@ -39,6 +41,7 @@ Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolida
 - `packages/shared` - utilitarios e contratos compartilhados no futuro.
 
 O repositorio adota apps independentes para manter o deploy futuro desacoplado, mesmo durante o desenvolvimento local.
+O fluxo de busca semantica atual simula a integracao com `LLM` e `RAG` usando `pgvector` e embeddings deterministicos locais, o que ajuda a demonstrar a arquitetura sem acoplar o MVP a provedores externos.
 
 ## Documentacao
 

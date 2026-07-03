@@ -15,9 +15,10 @@ Processamento em background para ingestao e reindexacao.
 - a API e a fonte de verdade operacional;
 - o worker consome `GET /api/products`;
 - cada produto vira um documento semantico consolidado;
-- o worker gera embeddings determinísticos locais para o MVP;
-- os embeddings são persistidos na API em uma tabela `pgvector`;
-- o pipeline atual serve como esqueleto de ingestao, embedding e reindexacao.
+- o worker gera embeddings deterministicos locais para o MVP;
+- os embeddings sao persistidos na API em uma tabela `pgvector`;
+- o pipeline atual serve como esqueleto de ingestao, embedding e reindexacao;
+- a demo usa esse fluxo para simular a integracao de `LLM` e `RAG` em um sistema ja existente.
 
 ## Execucao local
 

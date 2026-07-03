@@ -4,6 +4,8 @@
 
 Este projeto e um catalogo de produtos para portfolio, com foco em demonstrar arquitetura full-stack, busca semantica e uma experiencia de consulta moderna.
 
+A proposta da demo e simular uma integracao de `LLM`, `RAG` e `pgvector` sobre um sistema ja existente, de forma clara e apresentavel.
+
 ## Problema
 
 Catalogos tradicionais dependem de busca textual simples e filtros manuais. Isso funciona, mas nao captura bem intencao do usuario.
@@ -65,8 +67,10 @@ Construir um catalogo de produtos com:
 - `Next.js` no frontend;
 - `NestJS` na API e em workers;
 - `PostgreSQL + pgvector` para persistencia e busca vetorial;
-- `LlamaIndex` para ingestao, retrieval e RAG;
+- `LlamaIndex` como referencia conceitual da camada de ingestao e retrieval;
 - `LangChain` apenas se houver necessidade de agente depois.
+
+No MVP, a integracao e demonstrada por um fluxo interno com embeddings deterministicos e persistencia vetorial, representando a camada de `LLM` e `RAG` sem exigir um provedor externo real.
 
 ## Topologia do repositorio
 
@@ -108,7 +112,7 @@ O projeto usa agentes especializados para manter a arquitetura e a documentacao 
 
 ## Mitigacoes
 
-- começar com `LlamaIndex` apenas;
+- comecar com `LlamaIndex` apenas;
 - enriquecer os dados do catalogo com atributos relevantes;
 - usar busca hibrida com ranking simples;
 - manter ADRs para registrar decisoes irreversiveis.

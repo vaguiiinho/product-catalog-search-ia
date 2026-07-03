@@ -7,6 +7,7 @@ Aprovado
 ## Contexto
 
 A fase de busca semantica precisa de um pipeline previsivel para transformar o catalogo em documentos prontos para indexacao vetorial e reindexacao futura.
+Como o objetivo do projeto e demonstrar a integracao em um sistema ja existente, a estrategia privilegia um fluxo interno e observavel, em vez de depender de um provedor externo real no MVP.
 
 ## Decisao
 
@@ -17,6 +18,7 @@ Adotar uma estrategia de ingestao em camadas:
 - normalizacao do produto antes de qualquer etapa semantica;
 - producao de um documento semantico por produto, com texto consolidado para embeddings posteriores;
 - reindexacao incremental quando possivel, mantendo uma trilha clara para o MVP.
+- representar a camada de `LLM`/`RAG` com embeddings deterministicos e persistencia em `pgvector`, para a demo ficar coesa.
 
 ## Alternativas consideradas
 
@@ -26,18 +28,18 @@ Adotar uma estrategia de ingestao em camadas:
 
 ## Justificativa
 
-- o contrato HTTP da API já existe e simplifica a coleta de dados;
+- o contrato HTTP da API ja existe e simplifica a coleta de dados;
 - o worker fica desacoplado do runtime da API;
-- a normalizacao antes da indexacao reduz ruído no conteúdo vetorial;
-- o desenho prepara a transição para `LlamaIndex` sem forçar a etapa de embeddings agora.
+- a normalizacao antes da indexacao reduz ruido no conteudo vetorial;
+- o desenho prepara a transicao para `LlamaIndex` sem forcar a etapa de embeddings agora.
 
 ## Consequencias
 
 - o worker passa a ser um componente real do sistema;
-- a estratégia fica explícita e documentada;
+- a estrategia fica explicita e documentada;
 - a indexacao futura pode ser incremental sem redesenhar a coleta;
-- a busca semântica depende de dados mais ricos e consistentes.
+- a busca semantica depende de dados mais ricos e consistentes.
 
 ## Observacoes
 
-O MVP implementa a preparação de documentos de ingestao; a geração de embeddings e a persistência vetorial continuam para a próxima etapa.
+O MVP implementa a preparacao de documentos de ingestao; a geracao de embeddings deterministicos e a persistencia vetorial ja fazem parte da demo, enquanto a integracao com LLM externo continua fora do escopo.

@@ -7,10 +7,11 @@ Aprovado
 ## Contexto
 
 O catalogo precisa entender intencao do usuario, nao apenas palavras-chave. A solucao deve suportar ingestao, retrieval e uma base para RAG.
+Neste projeto, a camada de `LLM` e `RAG` e apresentada como integracao simulada sobre um sistema ja existente, para fins de portfolio e demo.
 
 ## Decisao
 
-Usar `LlamaIndex` como base da camada de busca semantica e RAG.
+Usar `LlamaIndex` como base conceitual da camada de busca semantica e RAG.
 
 `LangChain` nao sera parte obrigatoria do MVP e so entrara se houver necessidade real de agente com ferramentas.
 
@@ -30,9 +31,10 @@ Usar `LlamaIndex` como base da camada de busca semantica e RAG.
 ## Consequencias
 
 - MVP mais simples e previsivel;
-- menor custo cognitivo para manter a solução;
+- menor custo cognitivo para manter a solucao;
 - possibilidade de adicionar `LangChain` depois, apenas se necessario;
 - dependencia da qualidade do schema e dos dados de entrada.
+- a demo mostra a arquitetura de `LLM` e `RAG` sem depender de uma integracao externa real no MVP.
 
 ## Observacoes
 

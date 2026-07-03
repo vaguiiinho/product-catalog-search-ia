@@ -23,3 +23,4 @@ Arquivos principais do projeto:
 - contratos explicitamente documentados entre apps.
 - C4 como diagrama principal de contexto e containers;
 - roteiro de apresentacao alinhado ao estado real da aplicacao.
+- demo de `LLM`, `RAG` e `pgvector` em um sistema ja existente, com integracao simulada no MVP.
