@@ -17,8 +17,9 @@ O foco da demo e mostrar uma integracao simulada de `LLM`, `RAG` e `pgvector` em
 - `Next.js` para o frontend;
 - `NestJS` para a API e workers;
 - `PostgreSQL + pgvector` para persistencia e busca vetorial;
-- `LlamaIndex` como camada preferencial de orquestracao da integracao LLM/RAG no sistema existente;
-- `LangChain` apenas se houver necessidade futura de agente ou ferramentas.
+- `LangChain` como camada preferencial de orquestracao da integracao LLM/RAG no stack TypeScript;
+- `Groq` como provedor de LLM para a camada assistida;
+- `LlamaIndex` apenas se uma futura parte Python exigir um fluxo separado.
 
 ## Arquitetura
 
@@ -29,7 +30,7 @@ O sistema esta dividido em:
 - `Catalog API` - CRUD, contratos e regras de negocio;
 - `Ingestion Worker` - importacao, normalizacao e reindexacao;
 - `PostgreSQL + pgvector` - dados e vetores;
-- `AI Pipeline` - recuperacao semantica e base conceitual para RAG.
+- `AI Pipeline` - recuperacao semantica, prompts e respostas assistidas.
 
 Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolidada em [docs/architecture-review.md](./docs/architecture-review.md).
 
@@ -41,7 +42,7 @@ Veja o diagrama C4 em [c4-diagram.puml](./c4-diagram.puml) e a revisao consolida
 - `packages/shared` - utilitarios e contratos compartilhados no futuro.
 
 O repositorio adota apps independentes para manter o deploy futuro desacoplado, mesmo durante o desenvolvimento local.
-O fluxo de busca semantica atual deixa explicito que o worker gera embeddings e persiste os vetores, enquanto `LlamaIndex` ou `LangChain` podem orquestrar a camada de `LLM` e `RAG` sobre a base existente. No MVP, isso e demonstrado com embeddings deterministicos locais e `pgvector`, sem acoplar a demo a provedores externos.
+O fluxo de busca semantica atual deixa explicito que o worker gera embeddings e persiste os vetores. Quando a camada de `RAG` for ativada no runtime, a combinacao recomendada para este repo e `LangChain` + `Groq`, mantendo a stack em TypeScript. No MVP, isso continua demonstrado com embeddings deterministicos locais e `pgvector`, sem acoplar a demo a provedores externos.
 
 ## Documentacao
 
@@ -55,6 +56,7 @@ O fluxo de busca semantica atual deixa explicito que o worker gera embeddings e 
 - [ADR 0003 - documentacao como entrega](./docs/adr/0003-documentation-and-deliverables.md)
 - [ADR 0004 - orquestracao de agentes](./docs/adr/0004-agent-orchestration.md)
 - [ADR 0005 - monorepo com apps independentes](./docs/adr/0005-monorepo-with-independent-apps.md)
+- [ADR 0007 - RAG com LangChain e Groq](./docs/adr/0007-rag-com-langchain-e-groq.md)
 
 ## Agentes
 

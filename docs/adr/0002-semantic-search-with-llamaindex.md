@@ -9,6 +9,8 @@ Aprovado
 O catalogo precisa entender intencao do usuario, nao apenas palavras-chave. A solucao deve suportar ingestao, retrieval e uma base para RAG.
 Neste projeto, o worker faz a geracao de embeddings e a persistencia vetorial, enquanto `LlamaIndex` e a camada preferencial de orquestracao da integracao de `LLM` e `RAG` sobre um sistema ja existente. `LangChain` continua opcional, apenas se a demo ou uma evolucao futura exigir ferramentas adicionais.
 
+> Nota: esta ADR registra a avaliacao original. A decisao atual para o stack TypeScript do repositorio esta em [ADR 0007](./0007-rag-com-langchain-e-groq.md).
+
 ## Decisao
 
 Usar `LlamaIndex` como camada preferencial de orquestracao da busca semantica e RAG.

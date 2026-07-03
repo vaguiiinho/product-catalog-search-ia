@@ -31,7 +31,7 @@ Adotar uma estrategia de ingestao em camadas:
 - o contrato HTTP da API ja existe e simplifica a coleta de dados;
 - o worker fica desacoplado do runtime da API;
 - a normalizacao antes da indexacao reduz ruido no conteudo vetorial;
-- o desenho prepara a transicao para `LlamaIndex` sem forcar a etapa de embeddings agora.
+- o desenho prepara a transicao para a camada de RAG do projeto, hoje prevista com `LangChain` + `Groq`, sem forcar a etapa de embeddings agora.
 
 ## Consequencias
 

@@ -67,10 +67,11 @@ Construir um catalogo de produtos com:
 - `Next.js` no frontend;
 - `NestJS` na API e em workers;
 - `PostgreSQL + pgvector` para persistencia e busca vetorial;
-- `LlamaIndex` como camada preferencial de orquestracao da integracao LLM/RAG sobre o sistema existente;
-- `LangChain` apenas se houver necessidade de agente depois.
+- `LangChain` como camada preferencial de orquestracao da integracao LLM/RAG no stack TypeScript;
+- `Groq` como provedor de LLM para a camada assistida;
+- `LlamaIndex` apenas se uma futura parte Python exigir um fluxo separado.
 
-No MVP, o worker gera embeddings deterministicos e persiste os vetores em `pgvector`, enquanto `LlamaIndex` ou `LangChain` representam a camada de orquestracao de `LLM` e `RAG` sobre a base existente, sem exigir um provedor externo real.
+No MVP, o worker gera embeddings deterministicos e persiste os vetores em `pgvector`, enquanto a camada de orquestracao de `LLM` e `RAG` fica prevista para `LangChain` + `Groq` sobre a base existente. A demo pode continuar sem depender de provedor externo real ate essa integracao ser ativada.
 
 ## Topologia do repositorio
 
@@ -92,7 +93,7 @@ O projeto usa agentes especializados para manter a arquitetura e a documentacao 
 - `nestjs-backend` implementa API, Prisma e testes;
 - `nextjs-frontend` implementa interface e interacoes no Next.js;
 - `ingestion-worker` trata ingestao, jobs e reindexacao;
-- `ai-rag` trata recuperacao semantica e fluxo de IA;
+- `ai-rag` trata recuperacao semantica, prompts, tool calling e orquestracao com Groq;
 - `data-vector-store` trata schema, indices e vetores;
 - `documentation` produz PRD, ADRs e checklist.
 
@@ -112,7 +113,7 @@ O projeto usa agentes especializados para manter a arquitetura e a documentacao 
 
 ## Mitigacoes
 
-- comecar com `LlamaIndex` apenas;
+- comecar com `LangChain` + `Groq` no stack TypeScript;
 - enriquecer os dados do catalogo com atributos relevantes;
 - usar busca hibrida com ranking simples;
 - manter ADRs para registrar decisoes irreversiveis.

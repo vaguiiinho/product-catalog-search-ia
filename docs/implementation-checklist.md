@@ -58,7 +58,16 @@ Legenda:
 - [x] atualizar PRD, README e ADRs para refletir a demo sobre sistema existente;
 - [x] revisar o roteiro de apresentacao com a nova proposta;
 - [x] deixar explicito que o worker faz embeddings e persistencia vetorial;
-- [x] deixar explicito que `LlamaIndex` ou `LangChain` podem orquestrar a integracao LLM/RAG sobre o sistema existente;
+- [x] deixar explicito que `LangChain` + `Groq` pode orquestrar a integracao LLM/RAG sobre o sistema existente;
 - [x] revisar a copy do frontend para evitar promessas de integracao real com LLM externo;
 - [x] validar se a demonstracao verbal destaca claramente o papel do worker, embeddings e vetor persistido;
 - [x] fazer uma passagem final de consistencia entre checklist, roteiro e arquitetura.
+
+## Fase 7 - RAG com Groq
+
+- [ ] integrar `LangChain` no runtime da API ou em um servico dedicado;
+- [ ] conectar `Groq` como provedor de LLM;
+- [ ] definir modelo padrao (`llama-3.3-70b-versatile`) e fallback (`llama-3.1-8b-instant`);
+- [ ] expor uma rota de resposta assistida baseada em contexto do catalogo;
+- [ ] validar tool calling ou structured output, se a demo pedir;
+- [ ] revisar o roteiro da apresentacao com a camada de RAG em runtime.

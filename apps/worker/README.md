@@ -19,7 +19,8 @@ Processamento em background para ingestao e reindexacao.
 - os embeddings sao persistidos na API em uma tabela `pgvector`;
 - o pipeline atual serve como esqueleto de ingestao, embedding e reindexacao;
 - a demo usa esse fluxo para simular a integracao de `LLM` e `RAG` em um sistema ja existente;
-- `LlamaIndex` ou `LangChain` entram como camada de orquestracao, se a evolucao da demo exigir.
+- a camada de orquestracao de `RAG` recomendada para este repositorio e `LangChain` + `Groq`, mantida fora do worker;
+- `LlamaIndex` fica como alternativa futura apenas se surgir a necessidade de um fluxo Python separado.
 
 ## Execucao local
 

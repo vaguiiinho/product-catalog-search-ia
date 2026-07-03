@@ -14,7 +14,7 @@
 ## 3. Solucao
 
 - Mostrar `Next.js` no frontend, `NestJS` na API e `PostgreSQL + pgvector` na base.
-- Explicar que o worker prepara a ingestao e a indexacao semantica, representando a camada de IA/RAG no fluxo demonstrado.
+- Explicar que o worker prepara a ingestao e a indexacao semantica, enquanto a camada de RAG recomendada para o repo e `LangChain` + `Groq`.
 - Destacar que a documentacao faz parte da entrega.
 
 ## 4. Demo
@@ -24,13 +24,13 @@
 - Navegar ate um produto e mostrar dados, atributos e contexto.
 - Mostrar que o worker gera embeddings, consolida o documento semantico e grava os vetores em `pgvector`.
 - Apontar o fluxo de ingestao e a relacao com o endpoint semantico.
-- Reforcar que `LlamaIndex` ou `LangChain` podem ser encaixados para orquestrar a camada de `LLM` e `RAG` sobre a base existente.
+- Reforcar que `LangChain` + `Groq` e a combinacao recomendada para a camada de `LLM` e `RAG` sobre a base existente.
 
 ## 5. Decisoes tecnicas
 
 - Monorepo com apps independentes.
 - Contratos HTTP entre frontend, API e worker.
-- `LlamaIndex` como referencia conceitual da camada de retrieval.
+- `LangChain` + `Groq` como escolha pratica para a camada de retrieval e respostas assistidas.
 - `PostgreSQL + pgvector` para manter a solucao simples e demonstravel.
 
 ## 6. Fechamento

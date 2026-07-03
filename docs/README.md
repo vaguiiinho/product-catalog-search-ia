@@ -6,6 +6,7 @@ Arquivos principais do projeto:
 - `adr/` - decisoes arquiteturais registradas, incluindo stack, busca semantica e orquestracao de agentes;
 - `implementation-checklist.md` - execucao por fases.
 - `adr/0005-monorepo-with-independent-apps.md` - estrategia de monorepo com apps independentes.
+- `adr/0007-rag-com-langchain-e-groq.md` - decisao da camada de RAG para o stack TypeScript.
 - `architecture-review.md` - revisao consolidada do desenho tecnico atual;
 - `presentation-script.md` - roteiro curto para demonstracao do projeto.
 

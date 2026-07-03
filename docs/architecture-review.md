@@ -10,7 +10,7 @@ Consolidar o desenho atual do produto para portfolio e deixar explicito o que ja
 - `NestJS` concentra CRUD, contratos e regras de catalogo.
 - `apps/worker` prepara documentos de ingestao, embeddings simulados e reindexacao.
 - `PostgreSQL + pgvector` permanece como destino natural para persistencia e busca vetorial.
-- `LlamaIndex` ou `LangChain` representam a camada de orquestracao de `LLM` e `RAG`.
+- `LangChain` com `Groq` representa a camada de orquestracao de `LLM` e `RAG` no stack TypeScript.
 - a demo representa `LLM` e `RAG` de forma simulada sobre um sistema ja existente, sem acoplar o MVP a um provedor externo.
 
 ## Diagrama
@@ -30,6 +30,8 @@ O diagrama C4 principal fica em [c4-diagram.puml](../c4-diagram.puml) e cobre:
 - priorizar simplicidade operacional para demo e entrevista;
 - tratar a busca semantica como extensao da base de catalogo, nao como sistema isolado.
 - manter a camada de IA como representacao arquitetural no MVP, com comportamento observavel via embeddings locais e `pgvector`.
+- manter o worker focado em ingestao, normalizacao, embeddings e reindexacao;
+- concentrar a camada de RAG em `LangChain` + `Groq` quando a integracao entrar no runtime.
 
 ## Riscos e mitigacoes
 
