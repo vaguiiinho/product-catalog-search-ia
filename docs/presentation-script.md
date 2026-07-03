@@ -22,7 +22,9 @@
 - Abrir a homepage e mostrar a busca.
 - Entrar no painel administrativo.
 - Navegar ate um produto e mostrar dados, atributos e contexto.
+- Mostrar que o worker gera embeddings, consolida o documento semantico e grava os vetores em `pgvector`.
 - Apontar o fluxo de ingestao e a relacao com o endpoint semantico.
+- Reforcar que `LlamaIndex` ou `LangChain` podem ser encaixados para orquestrar a camada de `LLM` e `RAG` sobre a base existente.
 
 ## 5. Decisoes tecnicas
 
