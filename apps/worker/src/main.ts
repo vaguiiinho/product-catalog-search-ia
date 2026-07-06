@@ -1,4 +1,7 @@
-import { persistSemanticIndex, runCatalogIngestionPipeline } from "./ingestion/catalog-ingestion";
+import {
+  persistSemanticIndex,
+  runCatalogIngestionPipeline,
+} from "./ingestion/catalog-ingestion.js";
 
 async function main() {
   const apiUrl = process.env.INGESTION_API_URL ?? "http://localhost:3001";

@@ -83,7 +83,8 @@ Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e cobr
 ## Como rodar
 
 - instalar dependencias: `corepack pnpm install`
-- subir o banco: `docker compose up -d postgres`
+- preparar o ambiente de deploy: `cp .env.deploy.example .env`
+- subir a stack: `docker compose up -d --build`
 - popular o banco: `corepack pnpm --dir apps/api prisma:seed`
 - validar tudo: `npm run lint` e `npm run test`
 - iniciar frontend: `npm run dev:web`
