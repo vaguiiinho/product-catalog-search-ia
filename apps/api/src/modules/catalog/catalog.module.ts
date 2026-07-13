@@ -13,8 +13,10 @@ import { PrismaService } from "./infrastructure/prisma.service";
 import { SemanticIndexService } from "./infrastructure/semantic-index.service";
 import { CatalogAgentController } from "./presentation/catalog-assistant.controller";
 import { SemanticIndexController } from "./presentation/semantic-index.controller";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
+  imports: [AuthModule],
   controllers: [CatalogController, SemanticIndexController, CatalogAgentController],
   providers: [
     PrismaService,

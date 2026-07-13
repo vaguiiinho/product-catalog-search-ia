@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getProducts, type Product } from "@/lib/products";
@@ -24,16 +25,23 @@ async function createProduct(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const price = Number(formData.get("price"));
   const categoryName = String(formData.get("categoryName") ?? "").trim();
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  const apiUrl = process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("admin_access_token")?.value;
 
   if (!name || !description || Number.isNaN(price) || price < 0) {
     redirect("/admin?error=Preencha nome, descricao e preco valido.");
+  }
+
+  if (!accessToken) {
+    redirect("/login?next=/admin");
   }
 
   const response = await fetch(`${apiUrl}/api/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       name,
@@ -42,6 +50,10 @@ async function createProduct(formData: FormData) {
       categoryName,
     }),
   });
+
+  if (response.status === 401 || response.status === 403) {
+    redirect("/login?error=Sessao expirada. Entre novamente.&next=/admin");
+  }
 
   if (!response.ok) {
     redirect("/admin?error=Falha ao criar produto.");
@@ -103,7 +115,7 @@ export default async function AdminPage({
       <section className="hero admin-hero">
         <div className="detail-topline">
           <Link href="/" className="back-link">
-            Voltar ao catalogo
+            Voltar ao inicio
           </Link>
           <span className="detail-id">Painel administrativo</span>
         </div>

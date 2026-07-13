@@ -16,6 +16,9 @@ COPY . .
 WORKDIR /app/apps/api
 RUN ./node_modules/.bin/prisma generate --schema prisma/schema.prisma
 RUN corepack pnpm --filter @pcs/api build
+# A imagem de runtime nao inclui fontes TypeScript. Compile o seed separadamente
+# para que ele possa ser executado depois do deploy sem instalar dependencias.
+RUN ./node_modules/.bin/tsc --outDir seed-dist --target ES2022 --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck prisma/seed.ts
 
 FROM base AS runtime
 WORKDIR /app/apps/api
@@ -24,8 +27,10 @@ COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/apps/api/node_modules /app/apps/api/node_modules
 COPY --from=build /app/apps/api/package.json ./package.json
 COPY --from=build /app/apps/api/dist ./dist
+COPY --from=build /app/apps/api/seed-dist ./seed-dist
 COPY --from=build /app/apps/api/prisma ./prisma
 COPY --from=build /app/apps/api/prisma.config.ts ./prisma.config.ts
 COPY --from=build /app/apps/api/healthcheck.js ./healthcheck.js
+COPY --from=build /app/apps/api/docker-bootstrap.js ./docker-bootstrap.js
 EXPOSE 3001
-CMD ["sh", "-c", "./node_modules/.bin/prisma db push --schema prisma/schema.prisma && node dist/main.js"]
+CMD ["sh", "-c", "node docker-bootstrap.js && node dist/main.js"]

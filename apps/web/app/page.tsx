@@ -45,101 +45,29 @@ type RankedProduct = Awaited<ReturnType<typeof getProducts>>[number] & {
   relevanceNote: string;
 };
 
-function rankProducts(products: Awaited<ReturnType<typeof getProducts>>, query?: string) {
-  const normalizedQuery = query?.trim().toLowerCase();
-
-  if (!normalizedQuery) {
-    return products.map((product) => ({
-      ...product,
-      score: 0,
-      relevanceLabel: "Ordenado por data",
-      relevanceNote: "Sem busca aplicada; exibindo os resultados mais recentes.",
-    }));
-  }
-
-  const terms = normalizedQuery.split(/\s+/).filter((term) => term.length > 2);
-
-  return products
-    .map((product) => {
-      const name = product.name.toLowerCase();
-      const description = product.description.toLowerCase();
-      const categoryName = product.category.name.toLowerCase();
-      const attributeText = product.attributes
-        .map((attribute) => `${attribute.key} ${attribute.value}`.toLowerCase())
-        .join(" ");
-
-      let score = 0;
-
-      if (name.includes(normalizedQuery)) {
-        score += 40;
-      }
-
-      if (description.includes(normalizedQuery)) {
-        score += 20;
-      }
-
-      if (categoryName.includes(normalizedQuery)) {
-        score += 16;
-      }
-
-      for (const term of terms) {
-        if (name.includes(term)) {
-          score += 8;
-        }
-
-        if (description.includes(term)) {
-          score += 3;
-        }
-
-        if (categoryName.includes(term)) {
-          score += 5;
-        }
-
-        if (attributeText.includes(term)) {
-          score += 2;
-        }
-      }
-
-      const relevanceLabel =
-        score >= 50 ? "Alta relevância" : score >= 20 ? "Relevância média" : "Relevância parcial";
-
-      const relevanceNote = name.includes(normalizedQuery)
-        ? "O nome do produto bate com a busca."
-        : description.includes(normalizedQuery)
-          ? "A descrição reforça essa correspondência."
-          : categoryName.includes(normalizedQuery)
-            ? "A categoria do produto bate com a busca."
-          : terms.some((term) => name.includes(term))
-            ? "Parte dos termos aparece no nome."
-            : "Há correspondência parcial na descrição.";
-
-      return {
-        ...product,
-        score,
-        relevanceLabel,
-        relevanceNote,
-      };
-    });
+function rankProducts(products: Awaited<ReturnType<typeof getProducts>>) {
+  return products.map((product) => ({
+    ...product,
+    score: 0,
+    relevanceLabel: "Produto recente",
+    relevanceNote: "Item disponível no catálogo.",
+  }));
 }
 
 function ProductGrid({
   products,
-  query,
 }: {
   products: RankedProduct[];
-  query?: string;
 }) {
   if (products.length === 0) {
     return (
       <section className="catalog-panel">
         <div className="section-header">
           <p className="eyebrow">Catalogo</p>
-          <h2>{query ? "Nenhum resultado encontrado." : "Nenhum produto cadastrado ainda."}</h2>
+          <h2>Nenhum produto cadastrado ainda.</h2>
         </div>
         <p className="empty-state">
-          {query
-            ? `Nao encontramos resultados para "${query}". Tente outra busca.`
-            : "O frontend ja conversa com a API e exibe a base pronta para a demo de embeddings e pgvector."}
+          O frontend ja conversa com a API e exibe a base pronta para a demo de embeddings e pgvector.
         </p>
       </section>
     );
@@ -191,9 +119,9 @@ function ProductGrid({
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; ask?: string }>;
+  searchParams: Promise<{ ask?: string }>;
 }) {
-  const { q, ask } = await searchParams;
+  const { ask } = await searchParams;
   const normalizedAsk = ask?.trim();
   let products: RankedProduct[] = [];
   let loadError = "";
@@ -201,7 +129,7 @@ export default async function HomePage({
   let assistantResult: Awaited<ReturnType<typeof askCatalogAssistant>> | null = null;
 
   try {
-    products = rankProducts(await getProducts(q), q);
+    products = rankProducts(await getProducts());
   } catch {
     loadError = "Nao foi possivel carregar a API agora. Verifique se o backend esta rodando.";
   }
@@ -231,23 +159,6 @@ export default async function HomePage({
           existente.
         </p>
 
-        <form className="search-box" method="get">
-          <label className="sr-only" htmlFor="query">
-            Buscar produtos
-          </label>
-          <input
-            id="query"
-            name="q"
-            defaultValue={q}
-            placeholder="Ex: tenis leve para corrida urbana"
-          />
-          <button type="submit">Buscar</button>
-        </form>
-        {q ? (
-          <p className="search-hint">
-            Ordenando resultados por relevancia para <strong>{q}</strong>.
-          </p>
-        ) : null}
       </section>
 
       <section className="assistant-panel">
@@ -265,7 +176,6 @@ export default async function HomePage({
           <label className="sr-only" htmlFor="ask">
             Perguntar ao assistente
           </label>
-          {q ? <input type="hidden" name="q" value={q} /> : null}
           <input
             id="ask"
             name="ask"
@@ -323,7 +233,7 @@ export default async function HomePage({
           <p className="empty-state">{loadError}</p>
         </section>
       ) : (
-        <ProductGrid products={products} query={q} />
+        <ProductGrid products={products} />
       )}
 
       <section className="features">

@@ -43,3 +43,19 @@ model ProductImage {
   position  Int      @default(0)
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
+
+// A escrita e a busca vetorial usam SQL bruto, pois o Prisma ainda nao expoe
+// pgvector como tipo nativo. Declarar a tabela impede que `prisma db push`
+// a interprete como objeto legado e descarte o indice de ingestao.
+model SemanticDocument {
+  id           String                   @id
+  productId    String                   @unique @map("product_id")
+  title        String
+  semanticText String                   @map("semantic_text")
+  facets       Json                     @default("{}")
+  embedding    Unsupported("vector(8)")
+  createdAt    DateTime                 @default(now()) @map("created_at")
+  updatedAt    DateTime                 @updatedAt @map("updated_at")
+
+  @@map("semantic_documents")
+}

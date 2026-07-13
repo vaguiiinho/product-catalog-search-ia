@@ -85,11 +85,16 @@ Os agentes do projeto ficam em [`.agents/README.md`](./.agents/README.md) e cobr
 - instalar dependencias: `corepack pnpm install`
 - preparar o ambiente de deploy: `cp .env.deploy.example .env`
 - subir a stack: `docker compose up -d --build`
-- popular o banco: `corepack pnpm --dir apps/api prisma:seed`
+- popular o banco na stack Docker: `docker compose exec api node seed-dist/prisma/seed.js`
+- adicionar produtos aleatorios: `docker compose exec api node seed-dist/prisma/seed.js --count=50`
 - validar tudo: `npm run lint` e `npm run test`
 - iniciar frontend: `npm run dev:web`
 - iniciar backend: `npm run dev:api`
 - iniciar worker: `npm run dev:worker`
+
+O container da API cria o schema apenas quando o banco esta vazio. Em bancos existentes, use
+migrations para alteracoes estruturais; o startup nao executa `prisma db push` para evitar perda
+de dados de indices vetoriais persistidos.
 
 ## Proximo passo
 

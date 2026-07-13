@@ -26,3 +26,14 @@ Processamento em background para ingestao e reindexacao.
 
 - `corepack pnpm --dir apps/worker dev`
 - opcionalmente definir `INGESTION_API_URL` se a API nao estiver em `http://localhost:3001`
+
+## Catalogo vazio
+
+O worker conclui normalmente quando a API retorna zero produtos: nesse caso nao ha documentos ou
+vetores para indexar. Para popular a stack Docker, execute uma vez:
+
+```bash
+docker compose exec api node seed-dist/prisma/seed.js
+```
+
+Para incluir produtos aleatorios, execute `docker compose exec api node seed-dist/prisma/seed.js --count=50`.

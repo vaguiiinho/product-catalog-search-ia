@@ -1,8 +1,9 @@
-import { Body, Controller, Get, NotFoundException, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { CreateProductUseCase } from "../application/create-product.use-case";
 import { GetProductUseCase } from "../application/get-product.use-case";
 import { ListProductsUseCase } from "../application/list-products.use-case";
 import { CreateProductDto } from "./dto/create-product.dto";
+import { AdminJwtGuard } from "../../auth/presentation/admin-jwt.guard";
 
 @Controller("products")
 export class CatalogController {
@@ -29,6 +30,7 @@ export class CatalogController {
   }
 
   @Post()
+  @UseGuards(AdminJwtGuard)
   create(@Body() dto: CreateProductDto) {
     return this.createProductUseCase.execute(dto);
   }

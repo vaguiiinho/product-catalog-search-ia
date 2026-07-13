@@ -17,7 +17,7 @@ export type CatalogAssistantResponse = {
 const DEFAULT_API_URL = "http://localhost:3001";
 
 export async function askCatalogAssistant(question: string): Promise<CatalogAssistantResponse> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
+  const apiUrl = process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
   const response = await fetch(`${apiUrl}/api/catalog/assistant/ask`, {
     method: "POST",
     headers: {

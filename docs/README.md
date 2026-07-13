@@ -7,6 +7,7 @@ Arquivos principais do projeto:
 - `implementation-checklist.md` - execucao por fases.
 - `adr/0005-monorepo-with-independent-apps.md` - estrategia de monorepo com apps independentes.
 - `adr/0007-rag-com-langchain-e-groq.md` - decisao da camada de RAG para o stack TypeScript.
+- `adr/0008-admin-authentication.md` - protecao do painel com JWT e credenciais por ambiente.
 - `architecture-review.md` - revisao consolidada do desenho tecnico atual;
 - `presentation-script.md` - roteiro curto para demonstracao do projeto.
 
