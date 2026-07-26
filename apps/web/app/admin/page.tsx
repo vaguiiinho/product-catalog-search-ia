@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getProducts, type Product } from "@/lib/products";
+import { getApiUrl } from "@/lib/api-url";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -25,7 +26,7 @@ async function createProduct(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const price = Number(formData.get("price"));
   const categoryName = String(formData.get("categoryName") ?? "").trim();
-  const apiUrl = process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  const apiUrl = getApiUrl();
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("admin_access_token")?.value;
 

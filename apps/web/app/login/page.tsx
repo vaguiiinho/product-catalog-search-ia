@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getApiUrl } from "@/lib/api-url";
 
 export const metadata: Metadata = {
   title: "Entrar",
@@ -26,7 +27,7 @@ async function login(formData: FormData) {
     redirect(`/login?error=${encodeURIComponent("Informe e-mail e senha.")}&next=${encodeURIComponent(nextPath)}`);
   }
 
-  const apiUrl = process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+  const apiUrl = getApiUrl();
 
   let response: Response;
   try {

@@ -94,8 +94,7 @@ function requiredEnv(name: string) {
 }
 
 function tokenTtlSeconds() {
-  const configured = Number(process.env.JWT_EXPIRES_IN_SECONDS ?? 60 * 60 * 8);
-  return Number.isInteger(configured) && configured > 0 ? configured : 60 * 60 * 8;
+  return 60 * 60 * 8;
 }
 
 function toBase64Url(value: string) {

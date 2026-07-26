@@ -25,10 +25,10 @@ export type Product = {
 
 type ProductListResponse = Product[];
 
-const DEFAULT_API_URL = "http://localhost:3001";
+import { getApiUrl } from "./api-url";
 
 export async function getProducts(query?: string): Promise<ProductListResponse> {
-  const apiUrl = process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_API_URL;
+  const apiUrl = getApiUrl();
   const searchParams = new URLSearchParams();
 
   if (query?.trim()) {

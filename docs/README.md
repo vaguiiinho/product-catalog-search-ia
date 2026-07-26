@@ -8,6 +8,7 @@ Arquivos principais do projeto:
 - `adr/0005-monorepo-with-independent-apps.md` - estrategia de monorepo com apps independentes.
 - `adr/0007-rag-com-langchain-e-groq.md` - decisao da camada de RAG para o stack TypeScript.
 - `adr/0008-admin-authentication.md` - protecao do painel com JWT e credenciais por ambiente.
+- `adr/0009-environment-and-oci-deployment.md` - separacao de ambientes, rede Docker e deploy OCI Free Tier.
 - `architecture-review.md` - revisao consolidada do desenho tecnico atual;
 - `presentation-script.md` - roteiro curto para demonstracao do projeto.
 

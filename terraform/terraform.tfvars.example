@@ -1,0 +1,10 @@
+# Nunca versione o arquivo terraform.tfvars real.
+tenancy_ocid     = "ocid1.tenancy.oc1..example"
+compartment_ocid = "ocid1.compartment.oc1..example"
+region           = "sa-saopaulo-1"
+
+# Selecione no Console uma imagem Ubuntu ARM64 para VM.Standard.A1.Flex da sua região.
+image_ocid = "ocid1.image.oc1.sa-saopaulo-1.example"
+
+ssh_public_key  = "ssh-ed25519 AAAA... voce@maquina"
+ssh_allowed_cidr = "203.0.113.10/32"

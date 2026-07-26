@@ -6,6 +6,10 @@ coverage
 .env.*
 !*.env.example
 !.env.deploy.example
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfvars
 pnpm-debug.log*
 *.tsbuildinfo
 apps/*/node_modules

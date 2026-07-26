@@ -4,7 +4,7 @@ import {
 } from "./ingestion/catalog-ingestion.js";
 
 async function main() {
-  const apiUrl = process.env.INGESTION_API_URL ?? "http://localhost:3001";
+  const apiUrl = process.env.API_URL ?? "http://localhost:3001";
 
   console.log("[worker] ready");
   console.log(`[worker] source=${apiUrl}`);
@@ -30,8 +30,8 @@ async function main() {
 void main().catch((error) => {
   if (isConnectionRefused(error)) {
     console.error(
-      `[worker] API indisponivel em ${process.env.INGESTION_API_URL ?? "http://localhost:3001"}.
-Inicie a API com \`npm run dev:api\` ou defina \`INGESTION_API_URL\` para apontar para uma instancia ativa.`,
+      `[worker] API indisponivel em ${process.env.API_URL ?? "http://localhost:3001"}.
+Inicie a API com \`npm run dev:api\` ou defina \`API_URL\` para apontar para uma instancia ativa.`,
     );
   }
 

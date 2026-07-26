@@ -22,7 +22,7 @@ worker e permanece separada da autenticação administrativa.
 ## Seed de catálogo
 
 `prisma:seed` mantém/atualiza os produtos-base sem apagar o catálogo. Para acrescentar produtos
-aleatórios, informe a quantidade por `SEED_PRODUCT_COUNT` ou execute:
+aleatórios, execute:
 
 ```bash
 npm run prisma:seed -- -- --count=50

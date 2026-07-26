@@ -14,8 +14,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY . .
 WORKDIR /app/apps/web
-ARG NEXT_PUBLIC_API_URL=/api
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN NEXT_BIN="$(find /app/node_modules -path '*/next/dist/bin/next' -print -quit)" && node "$NEXT_BIN" build
 
 FROM base AS runtime

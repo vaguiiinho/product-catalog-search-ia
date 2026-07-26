@@ -25,7 +25,7 @@ Processamento em background para ingestao e reindexacao.
 ## Execucao local
 
 - `corepack pnpm --dir apps/worker dev`
-- opcionalmente definir `INGESTION_API_URL` se a API nao estiver em `http://localhost:3001`
+- opcionalmente definir `API_URL` se a API nao estiver em `http://localhost:3001`
 
 ## Catalogo vazio
 

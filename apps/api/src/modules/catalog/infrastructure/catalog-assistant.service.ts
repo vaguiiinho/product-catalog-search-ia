@@ -2,7 +2,7 @@ import { Inject, Injectable, Optional } from "@nestjs/common";
 import { ToolMessage } from "@langchain/core/messages/tool";
 import { tool } from "@langchain/core/tools";
 import { PRODUCT_REPOSITORY, ProductRepositoryPort } from "../domain/product.repository.port";
-import { GROQ_CHAT_MODEL, ChatModelLike } from "./groq-chat-model.provider";
+import { GROQ_CHAT_MODEL, GROQ_MODEL, ChatModelLike } from "./groq-chat-model.provider";
 
 export type CatalogAssistantSource = {
   id: string;
@@ -41,7 +41,7 @@ export class CatalogAgentService {
     const products = await this.productRepository.search(normalizedQuestion);
     const contextProducts = products.slice(0, 5);
     const context = buildContext(normalizedQuestion, contextProducts);
-    const model = process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile";
+    const model = GROQ_MODEL;
     const searchTool = createCatalogSearchTool(this.productRepository);
 
     if (!this.chatModel) {

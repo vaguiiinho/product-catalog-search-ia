@@ -1,0 +1,11 @@
+#cloud-config
+package_update: true
+packages:
+  - docker.io
+  - docker-compose-v2
+  - git
+runcmd:
+  - systemctl enable --now docker
+  - usermod -aG docker ubuntu
+  - mkdir -p /opt/product-catalog
+  - chown ubuntu:ubuntu /opt/product-catalog

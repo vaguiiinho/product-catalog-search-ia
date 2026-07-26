@@ -40,10 +40,7 @@ function parseEnvFile(contents: string) {
 }
 
 function resolveEnvFile() {
-  const searchOrder =
-    process.env.NODE_ENV === "production"
-      ? [".env", "../.env"]
-      : [".env.local", ".env", "../.env.local", "../.env", ".env.example", "../.env.example"];
+  const searchOrder = process.env.NODE_ENV === "production" ? [".env"] : [".env.local", ".env"];
 
   for (const relativePath of searchOrder) {
     const candidate = path.resolve(process.cwd(), relativePath);

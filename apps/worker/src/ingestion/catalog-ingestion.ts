@@ -48,9 +48,7 @@ export type IngestionSummary = {
   sampleDocuments: IngestionDocument[];
 };
 
-const DEFAULT_API_URL = "http://localhost:3001";
-
-export async function fetchCatalog(apiUrl = DEFAULT_API_URL): Promise<CatalogProduct[]> {
+export async function fetchCatalog(apiUrl: string): Promise<CatalogProduct[]> {
   const response = await fetch(`${apiUrl}/api/products`, {
     cache: "no-store",
   });
@@ -123,7 +121,7 @@ export function summarizeIngestion(products: CatalogProduct[], documents: Ingest
   };
 }
 
-export async function runCatalogIngestionPipeline(apiUrl = DEFAULT_API_URL) {
+export async function runCatalogIngestionPipeline(apiUrl: string) {
   const products = await fetchCatalog(apiUrl);
   const normalized = normalizeCatalog(products);
   const documents = buildIngestionDocuments(products);

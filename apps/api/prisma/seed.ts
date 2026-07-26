@@ -201,7 +201,7 @@ async function main() {
 
 function readRandomProductCount() {
   const countArgument = process.argv.find((argument) => argument.startsWith("--count="));
-  const rawCount = countArgument?.slice("--count=".length) ?? process.env.SEED_PRODUCT_COUNT ?? "0";
+  const rawCount = countArgument?.slice("--count=".length) ?? "0";
   const count = Number(rawCount);
 
   if (!Number.isInteger(count) || count < 0 || count > 10_000) {
