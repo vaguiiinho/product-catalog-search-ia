@@ -197,6 +197,35 @@ input {
   margin-top: 22px;
 }
 
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 28px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pagination a,
+.pagination span {
+  padding: 9px 13px;
+  border-radius: 999px;
+}
+
+.pagination a {
+  border: 1px solid var(--border);
+  color: var(--accent-strong);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pagination span[aria-current="page"] {
+  color: var(--text);
+  font-weight: 700;
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
@@ -434,6 +463,16 @@ input {
   line-height: 1.7;
 }
 
+.assistant-notice {
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(196, 106, 43, 0.12);
+  color: var(--accent-strong);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .assistant-meta {
   display: flex;
   flex-wrap: wrap;
@@ -506,6 +545,36 @@ input {
 
 .admin-row-meta strong {
   color: var(--text);
+}
+
+.admin-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.admin-action-link,
+.admin-delete-button {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-delete-button {
+  color: #b43b2a;
+}
+
+.admin-edit-form {
+  width: 100%;
+  margin-top: 0;
 }
 
 .detail-grid {

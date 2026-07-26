@@ -16,6 +16,18 @@ async function hasCatalogSchema() {
 }
 
 async function main() {
+  console.log("[bootstrap] aplicando ajustes compatíveis de schema.");
+  execFileSync("./node_modules/.bin/prisma", [
+    "db",
+    "execute",
+    "--schema",
+    "prisma/schema.prisma",
+    "--file",
+    "prisma/migrations/20260726170000_category_unique_indexes/migration.sql",
+  ], {
+    stdio: "inherit",
+  });
+
   if (await hasCatalogSchema()) {
     console.log("[bootstrap] schema existente detectado; ignorando prisma db push.");
     return;

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getApiUrl } from "@/lib/api-url";
 
@@ -28,12 +28,17 @@ async function login(formData: FormData) {
   }
 
   const apiUrl = getApiUrl();
+  const requestHeaders = await headers();
+  const clientIp = requestHeaders.get("x-forwarded-for") ?? requestHeaders.get("x-real-ip") ?? undefined;
 
   let response: Response;
   try {
     response = await fetch(`${apiUrl}/api/auth/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(clientIp ? { "X-Forwarded-For": clientIp } : {}),
+      },
       body: JSON.stringify({ email, password }),
       cache: "no-store",
     });

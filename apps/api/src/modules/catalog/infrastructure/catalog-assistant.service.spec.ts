@@ -24,6 +24,8 @@ describe("CatalogAgentService", () => {
       ]),
       findById: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const service = new CatalogAgentService(repository, null);
@@ -56,6 +58,8 @@ describe("CatalogAgentService", () => {
       ]),
       findById: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const chatModel = {
@@ -81,6 +85,29 @@ describe("CatalogAgentService", () => {
     expect(result.answer).toBe("O tenis leve e o melhor ajuste para corrida urbana.");
   });
 
+  it("returns a retry notice and local fallback when Groq is rate limited", async () => {
+    const repository: ProductRepositoryPort = {
+      findAll: jest.fn(),
+      search: jest.fn().mockResolvedValue([]),
+      findById: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+    };
+    const chatModel = {
+      invoke: jest.fn().mockRejectedValue({
+        status: 429,
+        headers: { "retry-after": "30" },
+      }),
+    };
+
+    const service = new CatalogAgentService(repository, chatModel);
+    const result = await service.answerQuestion("tenis para corrida");
+
+    expect(result.usedFallback).toBe(true);
+    expect(result.notice).toContain("30 segundos");
+  });
+
   it("uses the catalog search tool when the model requests it", async () => {
     const repository: ProductRepositoryPort = {
       findAll: jest.fn(),
@@ -103,6 +130,8 @@ describe("CatalogAgentService", () => {
       ]),
       findById: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const chatModel = {

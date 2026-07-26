@@ -8,6 +8,8 @@ describe("SearchProductsUseCase", () => {
       search: jest.fn().mockResolvedValue([]),
       findById: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const useCase = new SearchProductsUseCase(repository);

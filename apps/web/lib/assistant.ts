@@ -13,22 +13,25 @@ export type CatalogAssistantResponse = {
   model: string;
   retrievedCount: number;
   usedFallback: boolean;
+  notice?: string;
   sources: CatalogAssistantSource[];
 };
 
-export async function askCatalogAssistant(question: string): Promise<CatalogAssistantResponse> {
+export async function askCatalogAssistant(question: string, clientIp?: string): Promise<CatalogAssistantResponse> {
   const apiUrl = getApiUrl();
   const response = await fetch(`${apiUrl}/api/catalog/assistant/ask`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(clientIp ? { "X-Forwarded-For": clientIp } : {}),
     },
     body: JSON.stringify({ question }),
     cache: "no-store",
   });
 
   if (!response.ok) {
-    throw new Error(`Falha ao consultar assistente: ${response.status}`);
+    const payload = (await response.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(payload?.message ?? `Falha ao consultar assistente: ${response.status}`);
   }
 
   return response.json() as Promise<CatalogAssistantResponse>;

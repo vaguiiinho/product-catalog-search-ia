@@ -17,6 +17,7 @@ export type CatalogAssistantResponse = {
   model: string;
   retrievedCount: number;
   usedFallback: boolean;
+  notice?: string;
   sources: CatalogAssistantSource[];
 };
 
@@ -139,17 +140,60 @@ export class CatalogAgentService {
         usedFallback: false,
         sources: contextProducts.map(mapSource),
       };
-    } catch {
+    } catch (error) {
       return {
         question: normalizedQuestion,
         answer: fallbackAnswer(contextProducts, normalizedQuestion),
         model,
         retrievedCount: contextProducts.length,
         usedFallback: true,
+        notice: getRateLimitNotice(error),
         sources: contextProducts.map(mapSource),
       };
     }
   }
+}
+
+function getRateLimitNotice(error: unknown) {
+  if (!isRateLimitError(error)) {
+    return undefined;
+  }
+
+  const retryAfterSeconds = getRetryAfterSeconds(error) ?? 60;
+  const retryAfterLabel = retryAfterSeconds >= 60
+    ? `${Math.ceil(retryAfterSeconds / 60)} minuto${retryAfterSeconds > 60 ? "s" : ""}`
+    : `${retryAfterSeconds} segundos`;
+
+  return `A IA atingiu o limite temporário de uso. Exibimos uma resposta local; tente novamente em cerca de ${retryAfterLabel}.`;
+}
+
+function isRateLimitError(error: unknown) {
+  const record = asRecord(error);
+  const response = asRecord(record?.response);
+  return record?.status === 429 || record?.statusCode === 429 || response?.status === 429;
+}
+
+function getRetryAfterSeconds(error: unknown) {
+  const record = asRecord(error);
+  const response = asRecord(record?.response);
+  const headers = response?.headers ?? record?.headers;
+  const rawValue = getHeader(headers, "retry-after");
+  const seconds = Number(rawValue);
+
+  return Number.isInteger(seconds) && seconds > 0 && seconds <= 3600 ? seconds : undefined;
+}
+
+function getHeader(headers: unknown, name: string) {
+  if (headers && typeof headers === "object" && "get" in headers && typeof headers.get === "function") {
+    return headers.get(name);
+  }
+
+  const record = asRecord(headers);
+  return record?.[name] ?? record?.[name.toLowerCase()];
+}
+
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" ? (value as Record<string, unknown>) : undefined;
 }
 
 function buildContext(question: string, products: Array<{ id: string; name: string; description: string; price: number; category: { name: string }; attributes: Array<{ key: string; value: string }> }>) {

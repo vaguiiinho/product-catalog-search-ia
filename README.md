@@ -133,6 +133,14 @@ somente a porta `80`: o web fica em `/` e a API em `/api`. Assim, o navegador n�
 `api:3001` e não precisa de CORS. `CORS_ORIGIN=http://localhost:3000` existe apenas para quem
 executa o frontend e a API diretamente na máquina.
 
+## Limites de requisição
+
+O Nginx limita acessos diretos por IP e a API aplica o mesmo controle aos fluxos que passam pelo
+Next.js. Assistente e login aceitam até 5 solicitações por minuto; a criação de produtos, 20 por
+minuto. Ao atingir o limite, a resposta é `429`, inclui o cabeçalho `Retry-After` e informa
+em quantos segundos tentar novamente. Se a Groq atingir a própria cota, o assistente preserva o
+catálogo e exibe a resposta local com um aviso de nova tentativa.
+
 O container da API cria o schema apenas quando o banco esta vazio. Em bancos existentes, use
 migrations para alteracoes estruturais; o startup nao executa `prisma db push` para evitar perda
 de dados de indices vetoriais persistidos.

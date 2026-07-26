@@ -24,11 +24,16 @@ describe("ListProductsUseCase", () => {
       search: jest.fn(),
       findById: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const useCase = new ListProductsUseCase(repository);
 
-    await expect(useCase.execute()).resolves.toHaveLength(1);
+    await expect(useCase.execute()).resolves.toMatchObject({
+      items: [expect.objectContaining({ id: "prod_1" })],
+      meta: { page: 1, limit: 9, total: 1, totalPages: 1 },
+    });
     expect(repository.findAll).toHaveBeenCalledTimes(1);
   });
 
@@ -38,11 +43,16 @@ describe("ListProductsUseCase", () => {
       search: jest.fn().mockResolvedValue([]),
       findById: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const useCase = new ListProductsUseCase(repository);
 
-    await expect(useCase.execute("tenis")).resolves.toEqual([]);
+    await expect(useCase.execute("tenis")).resolves.toEqual({
+      items: [],
+      meta: { page: 1, limit: 9, total: 0, totalPages: 1 },
+    });
     expect(repository.search).toHaveBeenCalledWith("tenis");
   });
 });

@@ -28,6 +28,10 @@ aleatórios, execute:
 npm run prisma:seed -- -- --count=50
 ```
 
+Itens incluídos pelo seed recebem `origem=demo`, `estoque=5 unidades` e
+`disponibilidade=em estoque`. Os itens aleatórios também incluem termos de uso e palavras-chave
+por categoria para tornar a demonstração de busca mais realista.
+
 Na imagem Docker de producao, use o seed JavaScript ja compilado, sem `pnpm` ou `ts-node`:
 
 ```bash

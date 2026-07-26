@@ -49,15 +49,29 @@ export type IngestionSummary = {
 };
 
 export async function fetchCatalog(apiUrl: string): Promise<CatalogProduct[]> {
-  const response = await fetch(`${apiUrl}/api/products`, {
-    cache: "no-store",
-  });
+  const products: CatalogProduct[] = [];
+  let page = 1;
+  let totalPages = 1;
 
-  if (!response.ok) {
-    throw new Error(`Falha ao buscar catalogo: ${response.status}`);
+  while (page <= totalPages) {
+    const response = await fetch(`${apiUrl}/api/products?page=${page}&limit=24`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Falha ao buscar catalogo: ${response.status}`);
+    }
+
+    const payload = (await response.json()) as {
+      items: CatalogProduct[];
+      meta: { totalPages: number };
+    };
+    products.push(...payload.items);
+    totalPages = payload.meta.totalPages;
+    page += 1;
   }
 
-  return response.json() as Promise<CatalogProduct[]>;
+  return products;
 }
 
 export function normalizeCatalog(products: CatalogProduct[]) {

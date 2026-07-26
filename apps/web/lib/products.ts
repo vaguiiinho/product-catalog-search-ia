@@ -23,17 +23,26 @@ export type Product = {
   updatedAt: string;
 };
 
-type ProductListResponse = Product[];
-
 import { getApiUrl } from "./api-url";
 
-export async function getProducts(query?: string): Promise<ProductListResponse> {
+export type ProductPage = {
+  items: Product[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export async function getProducts(query?: string, page = 1): Promise<ProductPage> {
   const apiUrl = getApiUrl();
   const searchParams = new URLSearchParams();
 
   if (query?.trim()) {
     searchParams.set("q", query.trim());
   }
+  searchParams.set("page", String(page));
 
   const response = await fetch(
     `${apiUrl}/api/products${searchParams.toString() ? `?${searchParams.toString()}` : ""}`,
@@ -46,5 +55,5 @@ export async function getProducts(query?: string): Promise<ProductListResponse> 
     throw new Error(`Falha ao carregar produtos: ${response.status}`);
   }
 
-  return response.json() as Promise<ProductListResponse>;
+  return response.json() as Promise<ProductPage>;
 }

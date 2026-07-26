@@ -6,7 +6,11 @@ import {
   ProductCategory,
   ProductImage,
 } from "../domain/product.entity";
-import { CreateProductInput, ProductRepositoryPort } from "../domain/product.repository.port";
+import {
+  CreateProductInput,
+  ProductRepositoryPort,
+  UpdateProductInput,
+} from "../domain/product.repository.port";
 import { embedText, toVectorLiteral } from "./semantic-vector";
 import { PrismaService } from "./prisma.service";
 
@@ -74,6 +78,9 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
             unaccent(COALESCE(sd.semantic_text, '')) ILIKE '%' || unaccent(${term}) || '%'
           )
         `);
+    const termMatchScores = termConditions.map((condition, index) => Prisma.sql`
+          CASE WHEN ${condition} THEN ${index === 0 ? 3 : 1} ELSE 0 END
+        `);
 
     const rows = await this.prisma.$queryRaw<
       {
@@ -95,7 +102,8 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
               CASE WHEN COALESCE(c.name, '') ILIKE '%' || qv.query || '%' THEN 2 ELSE 0 END +
               COALESCE(attr.attribute_score, 0)
             ) * 0.28
-          ) AS "hybridScore"
+          ) AS "hybridScore",
+          (${Prisma.join(termMatchScores, " + ")}) AS "termMatchScore"
         FROM "Product" p
         LEFT JOIN "Category" c ON c.id = p."categoryId"
         LEFT JOIN semantic_documents sd ON sd.product_id = p.id
@@ -108,7 +116,7 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
         ) attr ON true
         WHERE
           ${Prisma.join(termConditions, " OR ")}
-        ORDER BY "hybridScore" DESC, p."createdAt" DESC
+        ORDER BY "termMatchScore" DESC, "hybridScore" DESC, p."createdAt" DESC
         LIMIT 20
       )
       SELECT "productId" FROM scored_products
@@ -159,18 +167,7 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
   }
 
   async create(input: CreateProductInput): Promise<Product> {
-    const categoryName = input.categoryName?.trim() || "Geral";
-    const categorySlug = slugify(categoryName);
-    const category = await this.prisma.category.upsert({
-      where: { slug: categorySlug },
-      update: {
-        name: categoryName,
-      },
-      create: {
-        name: categoryName,
-        slug: categorySlug,
-      },
-    });
+    const category = await this.resolveCategory(input.categoryName);
 
     const product = await this.prisma.product.create({
       data: {
@@ -187,6 +184,52 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
     });
 
     return mapProduct(product);
+  }
+
+  async update(id: string, input: UpdateProductInput): Promise<Product | null> {
+    const existingProduct = await this.prisma.product.findUnique({ where: { id } });
+    if (!existingProduct) {
+      return null;
+    }
+
+    const category = await this.resolveCategory(input.categoryName);
+    const product = await this.prisma.product.update({
+      where: { id },
+      data: {
+        name: input.name,
+        description: input.description,
+        price: new Prisma.Decimal(input.price),
+        categoryId: category.id,
+      },
+      include: {
+        category: true,
+        attributes: true,
+        images: { orderBy: { position: "asc" } },
+      },
+    });
+
+    return mapProduct(product);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const existingProduct = await this.prisma.product.findUnique({ where: { id }, select: { id: true } });
+    if (!existingProduct) {
+      return false;
+    }
+
+    await this.prisma.product.delete({ where: { id } });
+    return true;
+  }
+
+  private async resolveCategory(categoryNameInput?: string) {
+    const categoryName = categoryNameInput?.trim() || "Geral";
+    const categorySlug = slugify(categoryName);
+
+    return this.prisma.category.upsert({
+      where: { slug: categorySlug },
+      update: { name: categoryName },
+      create: { name: categoryName, slug: categorySlug },
+    });
   }
 }
 

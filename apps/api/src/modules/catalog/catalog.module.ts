@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { CatalogController } from "./presentation/catalog.controller";
 import { ListProductsUseCase } from "./application/list-products.use-case";
 import { CreateProductUseCase } from "./application/create-product.use-case";
+import { UpdateProductUseCase } from "./application/update-product.use-case";
+import { DeleteProductUseCase } from "./application/delete-product.use-case";
 import { GetProductUseCase } from "./application/get-product.use-case";
 import { UpsertSemanticIndexUseCase } from "./application/upsert-semantic-index.use-case";
 import { AskCatalogAgentUseCase } from "./application/ask-catalog-assistant.use-case";
@@ -33,6 +35,8 @@ import { AuthModule } from "../auth/auth.module";
     ListProductsUseCase,
     GetProductUseCase,
     CreateProductUseCase,
+    UpdateProductUseCase,
+    DeleteProductUseCase,
     UpsertSemanticIndexUseCase,
     CatalogAgentService,
     AskCatalogAgentUseCase,

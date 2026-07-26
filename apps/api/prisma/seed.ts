@@ -143,12 +143,13 @@ async function main() {
     }
 
     const existingProduct = await prisma.product.findFirst({ where: { name: product.name } });
+    const attributes = withSeedAttributes(product.attributes);
     const data = {
       name: product.name,
       description: product.description,
       price: product.price,
       categoryId: category.id,
-      attributes: { create: product.attributes },
+      attributes: { create: attributes },
       images: {
         create: product.images.map((image, index) => ({ ...image, position: index })),
       },
@@ -159,7 +160,7 @@ async function main() {
         where: { id: existingProduct.id },
         data: {
           ...data,
-          attributes: { deleteMany: {}, create: product.attributes },
+          attributes: { deleteMany: {}, create: attributes },
           images: {
             deleteMany: {},
             create: product.images.map((image, index) => ({ ...image, position: index })),
@@ -188,7 +189,7 @@ async function main() {
         description: product.description,
         price: product.price,
         categoryId: category.id,
-        attributes: { create: product.attributes },
+        attributes: { create: withSeedAttributes(product.attributes) },
         images: { create: product.images },
       },
     });
@@ -213,22 +214,22 @@ function readRandomProductCount() {
 
 function createRandomProduct(index: number, availableCategories: typeof categories) {
   const category = availableCategories[index % availableCategories.length];
-  const adjectives = ["Essencial", "Urbano", "Premium", "Compacto", "Versátil", "Leve"];
-  const nouns = ["Kit", "Modelo", "Seleção", "Edição", "Coleção", "Item"];
-  const adjective = adjectives[index % adjectives.length];
-  const noun = nouns[(index * 3) % nouns.length];
+  const collections = ["Essencial", "Urbana", "Premium", "Compacta", "Versátil", "Leve"];
+  const profile = randomProductProfiles[category.slug];
+  const collection = collections[index % collections.length];
   const code = `${Date.now().toString(36)}-${index.toString().padStart(4, "0")}`;
-  const name = `${noun} ${adjective} ${code}`;
+  const name = `${profile.name} ${collection}`;
   const price = 39.9 + ((index * 37) % 760) + 0.01 * (index % 10);
 
   return {
     name,
-    description: `${name}, produto gerado para testes do catálogo na categoria ${category.name}.`,
+    description: profile.description,
     price: new Prisma.Decimal(price.toFixed(2)),
     categorySlug: category.slug,
     attributes: [
-      { key: "origem", value: "seed aleatória" },
-      { key: "coleção", value: adjective.toLowerCase() },
+      { key: "coleção", value: collection.toLowerCase() },
+      { key: "sku", value: `DEMO-${code.toUpperCase()}` },
+      ...profile.attributes,
     ],
     images: [
       {
@@ -238,6 +239,79 @@ function createRandomProduct(index: number, availableCategories: typeof categori
       },
     ],
   };
+}
+
+const randomProductProfiles: Record<
+  string,
+  {
+    name: string;
+    description: string;
+    attributes: Array<{ key: string; value: string }>;
+  }
+> = {
+  calcados: {
+    name: "Tênis para Corrida Urbana",
+    description:
+      "Tênis para corrida urbana, caminhada e treinos diários, com cabedal respirável e amortecimento confortável para percursos curtos e médios.",
+    attributes: [
+      { key: "uso", value: "corrida, caminhada e treino" },
+      { key: "pisada", value: "neutra" },
+      { key: "palavras-chave", value: "tênis corrida caminhada treino urbano" },
+    ],
+  },
+  vestuario: {
+    name: "Camiseta Esportiva",
+    description:
+      "Camiseta esportiva de secagem rápida para academia, corrida e uso casual, com tecido leve que favorece a ventilação durante o movimento.",
+    attributes: [
+      { key: "tecido", value: "dry fit" },
+      { key: "uso", value: "academia, corrida e casual" },
+      { key: "palavras-chave", value: "camiseta dry fit treino academia corrida" },
+    ],
+  },
+  "bolsas-e-acessorios": {
+    name: "Mochila para Trabalho e Viagem",
+    description:
+      "Mochila versátil para notebook, trabalho, faculdade e viagens curtas, com compartimentos organizados e acabamento resistente para a rotina.",
+    attributes: [
+      { key: "capacidade", value: "20 litros" },
+      { key: "uso", value: "notebook, trabalho e viagem" },
+      { key: "palavras-chave", value: "mochila notebook trabalho faculdade viagem" },
+    ],
+  },
+  eletronicos: {
+    name: "Fone Sem Fio",
+    description:
+      "Fone sem fio para música, chamadas e foco no trabalho, com conexão Bluetooth estável e isolamento de ruído para uso em casa, escritório ou deslocamentos.",
+    attributes: [
+      { key: "conectividade", value: "bluetooth" },
+      { key: "uso", value: "música, chamadas e trabalho" },
+      { key: "palavras-chave", value: "fone bluetooth sem fio música chamadas trabalho" },
+    ],
+  },
+  "casa-e-hidratacao": {
+    name: "Garrafa Térmica",
+    description:
+      "Garrafa térmica reutilizável para água gelada ou bebidas quentes, indicada para academia, escritório, viagens e hidratação ao longo do dia.",
+    attributes: [
+      { key: "capacidade", value: "750 ml" },
+      { key: "uso", value: "academia, escritório e viagem" },
+      { key: "palavras-chave", value: "garrafa térmica água hidratação academia" },
+    ],
+  },
+};
+
+function withSeedAttributes(attributes: Array<{ key: string; value: string }>) {
+  const businessAttributes = attributes.filter(
+    (attribute) => !["origem", "estoque", "disponibilidade"].includes(attribute.key),
+  );
+
+  return [
+    ...businessAttributes,
+    { key: "origem", value: "demo" },
+    { key: "estoque", value: "5 unidades" },
+    { key: "disponibilidade", value: "em estoque" },
+  ];
 }
 
 main()

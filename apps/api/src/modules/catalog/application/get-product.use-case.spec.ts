@@ -22,6 +22,8 @@ describe("GetProductUseCase", () => {
         updatedAt: new Date("2026-01-01T00:00:00.000Z"),
       }),
       create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     };
 
     const useCase = new GetProductUseCase(repository);
