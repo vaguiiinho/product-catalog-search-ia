@@ -16,25 +16,23 @@ async function hasCatalogSchema() {
 }
 
 async function main() {
-  console.log("[bootstrap] aplicando ajustes compatíveis de schema.");
-  execFileSync("./node_modules/.bin/prisma", [
-    "db",
-    "execute",
-    "--schema",
-    "prisma/schema.prisma",
-    "--file",
-    "prisma/migrations/20260726170000_category_unique_indexes/migration.sql",
-  ], {
-    stdio: "inherit",
-  });
-
   if (await hasCatalogSchema()) {
-    console.log("[bootstrap] schema existente detectado; ignorando prisma db push.");
+    console.log("[bootstrap] schema existente detectado; aplicando ajustes compatíveis.");
+    execFileSync("./node_modules/.bin/prisma", [
+      "db",
+      "execute",
+      "--schema",
+      "prisma/schema.prisma",
+      "--file",
+      "prisma/migrations/20260726170000_category_unique_indexes/migration.sql",
+    ], {
+      stdio: "inherit",
+    });
     return;
   }
 
-  console.log("[bootstrap] banco vazio detectado; criando schema Prisma.");
-  execFileSync("./node_modules/.bin/prisma", ["db", "push", "--schema", "prisma/schema.prisma"], {
+  console.log("[bootstrap] banco vazio detectado; aplicando migrations Prisma.");
+  execFileSync("./node_modules/.bin/prisma", ["migrate", "deploy", "--schema", "prisma/schema.prisma"], {
     stdio: "inherit",
   });
 }

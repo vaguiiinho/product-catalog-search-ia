@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { Pagination } from "@/components/pagination";
 import { getProducts, type Product } from "@/lib/products";
 import { getApiUrl } from "@/lib/api-url";
+import { getCategories, type Category } from "@/lib/categories";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -156,12 +157,24 @@ async function deleteProduct(formData: FormData) {
   redirect(adminUrl({ page, deleted: "1" }));
 }
 
-function ProductFields({ product }: { product?: Product }) {
+function ProductFields({ product, categories }: { product?: Product; categories: Category[] }) {
   return (
     <>
       <label className="admin-field">
         <span>Categoria</span>
-        <input name="categoryName" defaultValue={product?.category.name} placeholder="Ex: Calçados" />
+        <input
+          name="categoryName"
+          list="catalog-categories"
+          defaultValue={product?.category.name}
+          placeholder="Ex: Calçados"
+        />
+        <datalist id="catalog-categories">
+          {categories.map((category) => (
+            <option key={category.id} value={category.name}>
+              {category.productCount} produtos
+            </option>
+          ))}
+        </datalist>
       </label>
       <label className="admin-field">
         <span>Nome</span>
@@ -191,12 +204,14 @@ function AdminProductList({
   total,
   totalPages,
   editingId,
+  categories,
 }: {
   products: Product[];
   page: number;
   total: number;
   totalPages: number;
   editingId?: string;
+  categories: Category[];
 }) {
   return (
     <section className="admin-panel">
@@ -213,7 +228,7 @@ function AdminProductList({
               <form className="admin-form admin-edit-form" action={updateProduct}>
                 <input type="hidden" name="id" value={product.id} />
                 <input type="hidden" name="page" value={page} />
-                <ProductFields product={product} />
+                <ProductFields product={product} categories={categories} />
                 <div className="admin-row-actions">
                   <button type="submit">Salvar alterações</button>
                   <Link className="admin-action-link" href={adminUrl({ page })}>Cancelar</Link>
@@ -260,9 +275,10 @@ export default async function AdminPage({
     meta: { page: 1, limit: 9, total: 0, totalPages: 1 },
   };
   let loadError = "";
+  let categories: Category[] = [];
 
   try {
-    catalog = await getProducts(undefined, requestedPage);
+    [catalog, categories] = await Promise.all([getProducts(undefined, requestedPage), getCategories()]);
   } catch {
     loadError = "Não foi possível carregar o catálogo agora. Verifique se a API está online.";
   }
@@ -290,7 +306,7 @@ export default async function AdminPage({
         </div>
         <form className="admin-form" action={createProduct}>
           <input type="hidden" name="page" value={catalog.meta.page} />
-          <ProductFields />
+          <ProductFields categories={categories} />
           <button type="submit">Criar produto</button>
         </form>
       </section>
@@ -304,6 +320,7 @@ export default async function AdminPage({
           total={catalog.meta.total}
           totalPages={catalog.meta.totalPages}
           editingId={edit}
+          categories={categories}
         />
       )}
     </main>

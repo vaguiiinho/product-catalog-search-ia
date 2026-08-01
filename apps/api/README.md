@@ -37,3 +37,8 @@ Na imagem Docker de producao, use o seed JavaScript ja compilado, sem `pnpm` ou 
 ```bash
 docker compose exec api node seed-dist/prisma/seed.js --count=50
 ```
+
+## Categorias
+
+`GET /api/categories` lista as categorias ordenadas por nome, com `id`, `name`, `slug` e
+`productCount`. O seed já cria as categorias-base usadas pelo catálogo.

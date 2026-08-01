@@ -16,13 +16,18 @@ import { SemanticIndexService } from "./infrastructure/semantic-index.service";
 import { CatalogAgentController } from "./presentation/catalog-assistant.controller";
 import { SemanticIndexController } from "./presentation/semantic-index.controller";
 import { AuthModule } from "../auth/auth.module";
+import { CategoriesController } from "./presentation/categories.controller";
+import { ListCategoriesUseCase } from "./application/list-categories.use-case";
+import { CATEGORY_REPOSITORY } from "./domain/category.repository.port";
+import { PrismaCategoryRepository } from "./infrastructure/prisma-category.repository";
 
 @Module({
   imports: [AuthModule],
-  controllers: [CatalogController, SemanticIndexController, CatalogAgentController],
+  controllers: [CatalogController, CategoriesController, SemanticIndexController, CatalogAgentController],
   providers: [
     PrismaService,
     PrismaCatalogRepository,
+    PrismaCategoryRepository,
     SemanticIndexService,
     {
       provide: GROQ_CHAT_MODEL,
@@ -32,7 +37,12 @@ import { AuthModule } from "../auth/auth.module";
       provide: PRODUCT_REPOSITORY,
       useExisting: PrismaCatalogRepository,
     },
+    {
+      provide: CATEGORY_REPOSITORY,
+      useExisting: PrismaCategoryRepository,
+    },
     ListProductsUseCase,
+    ListCategoriesUseCase,
     GetProductUseCase,
     CreateProductUseCase,
     UpdateProductUseCase,
