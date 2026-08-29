@@ -17,6 +17,7 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+    image: vaguiiinho/product-catalog-api:1.0.1   
     container_name: pcs-api
     restart: unless-stopped
     depends_on:
@@ -37,6 +38,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+    image: vaguiiinho/product-catalog-web:1.0.1  
     container_name: pcs-web
     restart: unless-stopped
     depends_on:
@@ -57,6 +59,7 @@ services:
     build:
       context: .
       dockerfile: apps/worker/Dockerfile
+    image: vaguiiinho/product-catalog-worker:1.0.1
     container_name: pcs-worker
     depends_on:
       api:

@@ -34,12 +34,20 @@ describe("CreateProductUseCase", () => {
       categoryName: "Calçados",
     });
 
-    expect(repository.create).toHaveBeenCalledWith({
+    expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({
       name: "Tenis leve",
       description: "Tenis para corrida urbana",
       price: 299.9,
       categoryName: "Calçados",
-    });
+    }));
     expect(result.id).toBe("prod_1");
+  });
+
+  it("does not call the repository with invalid data", async () => {
+    const repository = { create: jest.fn() } as unknown as ProductRepositoryPort;
+    const useCase = new CreateProductUseCase(repository);
+
+    expect(() => useCase.execute({ name: "", description: "Descrição", price: -1 })).toThrow();
+    expect(repository.create).not.toHaveBeenCalled();
   });
 });

@@ -8,6 +8,7 @@ import {
 } from "../domain/product.entity";
 import {
   CreateProductInput,
+  ProductSearchFilters,
   ProductRepositoryPort,
   UpdateProductInput,
 } from "../domain/product.repository.port";
@@ -52,13 +53,34 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
     return products.map(mapProduct);
   }
 
-  async search(query: string): Promise<Product[]> {
+  async search(query: string, filters?: ProductSearchFilters): Promise<Product[]> {
     const normalizedQuery = query.trim();
-    if (!normalizedQuery) {
+    if (!normalizedQuery && filters?.price === undefined) {
       return this.findAll();
     }
 
-    const queryEmbedding = embedText(normalizedQuery);
+    if (normalizedQuery) {
+      const exactNameMatches = await this.prisma.product.findMany({
+        where: {
+          name: { equals: normalizedQuery, mode: "insensitive" },
+          ...(filters?.price === undefined
+            ? {}
+            : { price: new Prisma.Decimal(filters.price) }),
+        },
+        include: {
+          category: true,
+          attributes: true,
+          images: { orderBy: { position: "asc" } },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (exactNameMatches.length > 0) {
+        return exactNameMatches.map(mapProduct);
+      }
+    }
+
+    const queryEmbedding = embedText(normalizedQuery || `preco ${filters?.price}`);
     const searchTerms = tokenizeSearchTerms(normalizedQuery);
     const matchTerms = searchTerms.length > 0 ? searchTerms : [normalizedQuery];
     const termConditions = matchTerms.map((term) => Prisma.sql`
@@ -81,6 +103,15 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
     const termMatchScores = termConditions.map((condition, index) => Prisma.sql`
           CASE WHEN ${condition} THEN ${index === 0 ? 3 : 1} ELSE 0 END
         `);
+    const textCondition = termConditions.length > 0
+      ? Prisma.sql`(${Prisma.join(termConditions, " OR ")})`
+      : Prisma.sql`TRUE`;
+    const termMatchScore = termMatchScores.length > 0
+      ? Prisma.sql`(${Prisma.join(termMatchScores, " + ")})`
+      : Prisma.sql`0`;
+    const priceCondition = filters?.price === undefined
+      ? Prisma.sql`TRUE`
+      : Prisma.sql`p.price = ${filters.price}`;
 
     const rows = await this.prisma.$queryRaw<
       {
@@ -103,7 +134,7 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
               COALESCE(attr.attribute_score, 0)
             ) * 0.28
           ) AS "hybridScore",
-          (${Prisma.join(termMatchScores, " + ")}) AS "termMatchScore"
+          ${termMatchScore} AS "termMatchScore"
         FROM "Product" p
         LEFT JOIN "Category" c ON c.id = p."categoryId"
         LEFT JOIN semantic_documents sd ON sd.product_id = p.id
@@ -115,7 +146,8 @@ export class PrismaCatalogRepository implements ProductRepositoryPort {
             AND (pa.key ILIKE '%' || qv.query || '%' OR pa.value ILIKE '%' || qv.query || '%')
         ) attr ON true
         WHERE
-          ${Prisma.join(termConditions, " OR ")}
+          ${textCondition}
+          AND ${priceCondition}
         ORDER BY "termMatchScore" DESC, "hybridScore" DESC, p."createdAt" DESC
         LIMIT 20
       )
@@ -243,20 +275,24 @@ type ProductRecord = Prisma.ProductGetPayload<{
 
 function mapProduct(product: ProductRecord): Product {
   const category = product.category
-    ? new ProductCategory(product.category.id, product.category.name, product.category.slug)
-    : new ProductCategory("category_unknown", "Sem categoria", "sem-categoria");
+    ? ProductCategory.create(product.category)
+    : ProductCategory.create({
+        id: "00000000-0000-4000-8000-000000000000",
+        name: "Sem categoria",
+        slug: "sem-categoria",
+      });
 
-  return new Product(
-    product.id,
-    product.name,
-    product.description,
-    product.price.toNumber(),
+  return Product.create({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price.toNumber(),
     category,
-    product.attributes.map((attribute) => new ProductAttribute(attribute.id, attribute.key, attribute.value)),
-    product.images.map((image) => new ProductImage(image.id, image.url, image.alt, image.position)),
-    product.createdAt,
-    product.updatedAt,
-  );
+    attributes: product.attributes.map((attribute) => ProductAttribute.create(attribute)),
+    images: product.images.map((image) => ProductImage.create(image)),
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+  });
 }
 
 function slugify(value: string) {

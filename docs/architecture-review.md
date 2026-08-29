@@ -11,7 +11,7 @@ Consolidar o desenho atual do produto para portfolio e deixar explicito o que ja
 - `apps/worker` prepara documentos de ingestao, embeddings simulados e reindexacao.
 - `PostgreSQL + pgvector` permanece como destino natural para persistencia e busca vetorial.
 - `LangChain` com `Groq` representa a camada de orquestracao de `LLM` e `RAG` no stack TypeScript.
-- a API usa um agente fino para orquestrar retrieval, tool calling e resposta final, sem assumir ingestao ou persistencia.
+- a API usa um assistente fino: recupera o contexto antes da chamada e solicita uma resposta estruturada, sem assumir ingestao ou persistencia.
 - a homepage do Next.js exibe a busca e uma resposta assistida com fontes recuperadas.
 - a interface publica mantem o termo "assistente"; "agent" fica reservado para a camada interna da API.
 - a demo representa `LLM` e `RAG` de forma simulada sobre um sistema ja existente, sem acoplar o MVP a um provedor externo.
@@ -34,7 +34,7 @@ O diagrama C4 principal fica em [c4-diagram.puml](../c4-diagram.puml) e cobre:
 - tratar a busca semantica como extensao da base de catalogo, nao como sistema isolado.
 - manter a camada de IA como representacao arquitetural no MVP, com comportamento observavel via embeddings locais e `pgvector`.
 - manter o worker focado em ingestao, normalizacao, embeddings e reindexacao;
-- manter o agent fino na API, limitado a orquestracao de retrieval, tool calling e resposta;
+- manter o assistente fino na API, limitado a retrieval e resposta estruturada;
 - concentrar a camada de RAG em `LangChain` + `Groq` quando a integracao entrar no runtime.
 
 ## Riscos e mitigacoes

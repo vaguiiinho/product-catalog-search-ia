@@ -1,13 +1,16 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
-import { SemanticDocumentInput } from "../presentation/dto/upsert-semantic-index.dto";
+import {
+  SemanticDocumentInput,
+  SemanticIndexPort,
+} from "../application/ports/semantic-index.port";
 
 type SemanticDocumentRecord = SemanticDocumentInput & {
   embedding: number[];
 };
 
 @Injectable()
-export class SemanticIndexService implements OnModuleInit {
+export class SemanticIndexService implements OnModuleInit, SemanticIndexPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async onModuleInit() {

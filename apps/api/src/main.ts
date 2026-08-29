@@ -2,6 +2,7 @@ import { loadApiEnv } from "./bootstrap-env";
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app.module";
+import { DomainErrorFilter } from "./modules/catalog/presentation/domain-error.filter";
 
 async function bootstrap() {
   loadApiEnv();
@@ -18,6 +19,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalFilters(new DomainErrorFilter());
   await app.listen(process.env.PORT ? Number(process.env.PORT) : 3001);
 }
 

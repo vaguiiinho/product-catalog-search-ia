@@ -10,6 +10,7 @@ Arquivos principais do projeto:
 - `adr/0008-admin-authentication.md` - protecao do painel com JWT e credenciais por ambiente.
 - `adr/0009-environment-and-oci-deployment.md` - separacao de ambientes, rede Docker e deploy OCI Free Tier.
 - `architecture-review.md` - revisao consolidada do desenho tecnico atual;
+- `domain-api-action-plan.md` - plano e checklist de robustez do dominio, casos de uso e repositorios;
 - `presentation-script.md` - roteiro curto para demonstracao do projeto.
 
 ## Estrutura inicial

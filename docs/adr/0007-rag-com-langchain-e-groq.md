@@ -16,7 +16,8 @@ Adotar `LangChain` como camada de orquestracao da RAG no ecossistema TypeScript 
 
 Modelo padrao recomendado para a demo:
 
-- `llama-3.3-70b-versatile` para qualidade de resposta;
+- `openai/gpt-oss-20b` como padrão compatível com o plano de desenvolvimento;
+- `GROQ_MODEL` para selecionar outro modelo permitido pela conta;
 - `llama-3.1-8b-instant` como alternativa de menor custo e latencia.
 
 ## Alternativas consideradas

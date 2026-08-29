@@ -18,7 +18,7 @@ export class PrismaCategoryRepository implements CategoryRepositoryPort {
       orderBy: { name: "asc" },
     });
 
-    return categories.map((category) => ({
+    return categories.map((category) => Category.create({
       id: category.id,
       name: category.name,
       slug: category.slug,

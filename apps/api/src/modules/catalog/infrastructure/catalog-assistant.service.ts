@@ -1,25 +1,11 @@
-import { Inject, Injectable, Optional } from "@nestjs/common";
-import { ToolMessage } from "@langchain/core/messages/tool";
-import { tool } from "@langchain/core/tools";
+import { Inject, Injectable, Logger, Optional } from "@nestjs/common";
 import { PRODUCT_REPOSITORY, ProductRepositoryPort } from "../domain/product.repository.port";
-import { GROQ_CHAT_MODEL, GROQ_MODEL, ChatModelLike } from "./groq-chat-model.provider";
-
-export type CatalogAssistantSource = {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-};
-
-export type CatalogAssistantResponse = {
-  question: string;
-  answer: string;
-  model: string;
-  retrievedCount: number;
-  usedFallback: boolean;
-  notice?: string;
-  sources: CatalogAssistantSource[];
-};
+import { GROQ_CHAT_MODEL, ChatModelLike, getGroqModel } from "./groq-chat-model.provider";
+import {
+  CatalogAssistantPort,
+  CatalogAssistantResponse,
+} from "../application/ports/catalog-assistant.port";
+import { ProductSearchQuery } from "../domain/value-objects/product-search-query.value-object";
 
 type CatalogAssistantPayload = {
   answer: string;
@@ -28,7 +14,9 @@ type CatalogAssistantPayload = {
 };
 
 @Injectable()
-export class CatalogAgentService {
+export class CatalogAgentService implements CatalogAssistantPort {
+  private readonly logger = new Logger(CatalogAgentService.name);
+
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: ProductRepositoryPort,
@@ -39,11 +27,13 @@ export class CatalogAgentService {
 
   async answerQuestion(question: string): Promise<CatalogAssistantResponse> {
     const normalizedQuestion = question.trim();
-    const products = await this.productRepository.search(normalizedQuestion);
+    const searchQuery = ProductSearchQuery.create(normalizedQuestion);
+    const products = searchQuery.price === undefined
+      ? await this.productRepository.search(searchQuery.text)
+      : await this.productRepository.search(searchQuery.text, { price: searchQuery.price });
     const contextProducts = products.slice(0, 5);
     const context = buildContext(normalizedQuestion, contextProducts);
-    const model = GROQ_MODEL;
-    const searchTool = createCatalogSearchTool(this.productRepository);
+    const model = getGroqModel();
 
     if (!this.chatModel) {
       return {
@@ -52,21 +42,18 @@ export class CatalogAgentService {
         model,
         retrievedCount: contextProducts.length,
         usedFallback: true,
+        notice: "A integração com a IA não está configurada. Defina GROQ_API_KEY para habilitá-la.",
         sources: contextProducts.map(mapSource),
       };
     }
 
     try {
-      const modelWithTools = this.chatModel.bindTools?.([searchTool], {
-        tool_choice: "auto",
-      }) ?? this.chatModel;
-
-      const firstResponse = await modelWithTools.invoke(
+      const response = await this.chatModel.invoke(
         [
           {
             role: "system",
             content:
-              "Voce e um assistente de catalogo. Responda em portugues. Use a ferramenta search_catalog quando precisar recuperar produtos. Retorne um JSON valido com as chaves answer, summary e highlights. Se faltar informacao, diga isso de forma objetiva e nao invente produtos.",
+              "Voce e um assistente de catalogo. Responda em portugues usando somente o contexto fornecido. Retorne um JSON valido com as chaves answer, summary e highlights. Se faltar informacao, diga isso de forma objetiva e nao invente produtos.",
           },
           {
             role: "user",
@@ -75,62 +62,7 @@ export class CatalogAgentService {
         ],
       );
 
-      const toolCalls = firstResponse.tool_calls ?? [];
-
-      if (toolCalls.length > 0) {
-        const toolMessages = [];
-
-        for (const call of toolCalls) {
-          if (call.name !== "search_catalog") {
-            continue;
-          }
-
-          const toolResult = await (searchTool as unknown as {
-            invoke(input: { query: string; limit?: number }): Promise<{ content: unknown }>;
-          }).invoke({
-            query: String(call.args.query ?? "").trim(),
-            limit: typeof call.args.limit === "number" ? call.args.limit : undefined,
-          });
-          toolMessages.push(
-            new ToolMessage({
-              content: String(toolResult.content ?? ""),
-              tool_call_id: call.id ?? "search_catalog_call",
-              status: "success",
-            }),
-          );
-        }
-
-        if (toolMessages.length > 0) {
-          const finalResponse = await modelWithTools.invoke(
-            [
-              {
-                role: "system",
-                content:
-                  "Responda em portugues e retorne um JSON valido com answer, summary e highlights. Use somente o contexto e o resultado da ferramenta.",
-              },
-              {
-                role: "user",
-                content: context,
-              },
-              firstResponse,
-              ...toolMessages,
-            ],
-          );
-
-          const payload = parseAssistantPayload(finalResponse.content);
-
-          return {
-            question: normalizedQuestion,
-            answer: payload?.answer?.trim() || fallbackAnswer(contextProducts, normalizedQuestion),
-            model,
-            retrievedCount: contextProducts.length,
-            usedFallback: false,
-            sources: contextProducts.map(mapSource),
-          };
-        }
-      }
-
-      const payload = parseAssistantPayload(firstResponse.content);
+      const payload = parseAssistantPayload(response.content);
 
       return {
         question: normalizedQuestion,
@@ -141,22 +73,43 @@ export class CatalogAgentService {
         sources: contextProducts.map(mapSource),
       };
     } catch (error) {
+      const failure = getGroqFailure(error);
+      this.logger.warn(
+        `Fallback da Groq acionado: model=${model} status=${failure.status ?? "unknown"} code=${failure.code ?? "unknown"} type=${failure.type}`,
+      );
+
       return {
         question: normalizedQuestion,
         answer: fallbackAnswer(contextProducts, normalizedQuestion),
         model,
         retrievedCount: contextProducts.length,
         usedFallback: true,
-        notice: getRateLimitNotice(error),
+        notice: getGroqFailureNotice(error),
         sources: contextProducts.map(mapSource),
       };
     }
   }
 }
 
-function getRateLimitNotice(error: unknown) {
-  if (!isRateLimitError(error)) {
-    return undefined;
+function getGroqFailureNotice(error: unknown) {
+  const { status } = getGroqFailure(error);
+
+  if (status === 401) {
+    return "A chave da Groq foi recusada. Verifique ou gere uma nova GROQ_API_KEY.";
+  }
+
+  if (status === 403) {
+    return "A conta da Groq não possui acesso ao modelo configurado. Altere GROQ_MODEL ou revise o plano da conta.";
+  }
+
+  if (status === 400) {
+    return "A Groq recusou a solicitação enviada ao modelo. Consulte os logs da API para identificar o modelo utilizado.";
+  }
+
+  if (status !== 429) {
+    return status && status >= 500
+      ? "A Groq está temporariamente indisponível. Exibimos uma resposta local."
+      : "Não foi possível comunicar com a Groq. Exibimos uma resposta local; consulte os logs da API.";
   }
 
   const retryAfterSeconds = getRetryAfterSeconds(error) ?? 60;
@@ -167,10 +120,23 @@ function getRateLimitNotice(error: unknown) {
   return `A IA atingiu o limite temporário de uso. Exibimos uma resposta local; tente novamente em cerca de ${retryAfterLabel}.`;
 }
 
-function isRateLimitError(error: unknown) {
+function getGroqFailure(error: unknown) {
   const record = asRecord(error);
   const response = asRecord(record?.response);
-  return record?.status === 429 || record?.statusCode === 429 || response?.status === 429;
+  const nestedError = asRecord(record?.error);
+  const status = toHttpStatus(record?.status ?? record?.statusCode ?? response?.status);
+  const codeValue = record?.code ?? nestedError?.code;
+
+  return {
+    status,
+    code: typeof codeValue === "string" ? codeValue : undefined,
+    type: error instanceof Error ? error.name : typeof error,
+  };
+}
+
+function toHttpStatus(value: unknown) {
+  const status = Number(value);
+  return Number.isInteger(status) && status >= 100 && status <= 599 ? status : undefined;
 }
 
 function getRetryAfterSeconds(error: unknown) {
@@ -236,7 +202,7 @@ function fallbackAnswer(products: Array<{ name: string }>, question: string) {
   }
 
   const names = products.map((product) => product.name).join(", ");
-  return `Encontrei estes itens como base para responder sobre "${question}": ${names}. A camada de RAG ainda esta usando fallback local porque a integracao com Groq nao foi configurada.`;
+  return `Encontrei estes itens como base para responder sobre "${question}": ${names}. A resposta foi gerada localmente porque a IA externa nao esta disponivel no momento.`;
 }
 
 function mapSource(product: {
@@ -260,7 +226,13 @@ function messageContentToText(content: unknown) {
 
   if (Array.isArray(content)) {
     return content
-      .map((part) => (typeof part === "string" ? part : ""))
+      .map((part) => {
+        if (typeof part === "string") {
+          return part;
+        }
+        const record = asRecord(part);
+        return typeof record?.text === "string" ? record.text : "";
+      })
       .join("")
       .trim();
   }
@@ -276,7 +248,7 @@ function parseAssistantPayload(content: unknown): CatalogAssistantPayload | null
   }
 
   try {
-    const parsed = JSON.parse(text) as Partial<CatalogAssistantPayload>;
+    const parsed = JSON.parse(extractJsonObject(text)) as Partial<CatalogAssistantPayload>;
 
     if (typeof parsed.answer !== "string") {
       return null;
@@ -290,63 +262,19 @@ function parseAssistantPayload(content: unknown): CatalogAssistantPayload | null
         : undefined,
     };
   } catch {
-    return null;
+    return { answer: text };
   }
 }
 
-function createCatalogSearchTool(productRepository: ProductRepositoryPort) {
-  return tool(
-    async (input: { query?: string; limit?: number }) => {
-      const query = String(input?.query ?? "").trim();
-      const limit = clampLimit(input?.limit);
-      const products = await productRepository.search(query);
-      const results = products.slice(0, limit).map((product) => ({
-        id: product.id,
-        name: product.name,
-        category: product.category?.name ?? "Sem categoria",
-        price: product.price,
-        description: product.description,
-        attributes: product.attributes.map((attribute) => `${attribute.key}: ${attribute.value}`),
-      }));
+function extractJsonObject(text: string) {
+  const withoutFence = text
+    .replace(/^\s*```(?:json)?\s*/iu, "")
+    .replace(/\s*```\s*$/u, "")
+    .trim();
+  const firstBrace = withoutFence.indexOf("{");
+  const lastBrace = withoutFence.lastIndexOf("}");
 
-      return JSON.stringify(
-        {
-          query,
-          count: results.length,
-          results,
-        },
-        null,
-        2,
-      );
-    },
-    {
-      name: "search_catalog",
-      description: "Busca produtos relevantes no catalogo com base em uma consulta de texto.",
-      schema: {
-        type: "object",
-        properties: {
-          query: {
-            type: "string",
-            description: "Texto de busca usado para localizar produtos relevantes.",
-          },
-          limit: {
-            type: "integer",
-            minimum: 1,
-            maximum: 5,
-            description: "Numero maximo de produtos a retornar.",
-          },
-        },
-        required: ["query"],
-        additionalProperties: false,
-      },
-    },
-  );
-}
-
-function clampLimit(limit: number | undefined) {
-  if (typeof limit !== "number" || !Number.isFinite(limit)) {
-    return 5;
-  }
-
-  return Math.max(1, Math.min(5, Math.trunc(limit)));
+  return firstBrace >= 0 && lastBrace > firstBrace
+    ? withoutFence.slice(firstBrace, lastBrace + 1)
+    : withoutFence;
 }

@@ -34,6 +34,3 @@ export class UpsertSemanticIndexDto {
   @Type(() => SemanticDocumentDto)
   documents!: SemanticDocumentDto[];
 }
-
-export type SemanticDocumentInput = SemanticDocumentDto;
-export type UpsertSemanticIndexInput = UpsertSemanticIndexDto;

@@ -20,6 +20,8 @@ import { CategoriesController } from "./presentation/categories.controller";
 import { ListCategoriesUseCase } from "./application/list-categories.use-case";
 import { CATEGORY_REPOSITORY } from "./domain/category.repository.port";
 import { PrismaCategoryRepository } from "./infrastructure/prisma-category.repository";
+import { CATALOG_ASSISTANT } from "./application/ports/catalog-assistant.port";
+import { SEMANTIC_INDEX } from "./application/ports/semantic-index.port";
 
 @Module({
   imports: [AuthModule],
@@ -40,6 +42,14 @@ import { PrismaCategoryRepository } from "./infrastructure/prisma-category.repos
     {
       provide: CATEGORY_REPOSITORY,
       useExisting: PrismaCategoryRepository,
+    },
+    {
+      provide: CATALOG_ASSISTANT,
+      useExisting: CatalogAgentService,
+    },
+    {
+      provide: SEMANTIC_INDEX,
+      useExisting: SemanticIndexService,
     },
     ListProductsUseCase,
     ListCategoriesUseCase,

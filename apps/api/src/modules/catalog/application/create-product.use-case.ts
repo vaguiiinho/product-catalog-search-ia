@@ -4,7 +4,9 @@ import {
   PRODUCT_REPOSITORY,
   ProductRepositoryPort,
 } from "../domain/product.repository.port";
-import { Product } from "../domain/product.entity";
+import { Product, ProductDetails } from "../domain/product.entity";
+
+export type CreateProductOutput = Product;
 
 @Injectable()
 export class CreateProductUseCase {
@@ -13,7 +15,7 @@ export class CreateProductUseCase {
     private readonly productRepository: ProductRepositoryPort,
   ) {}
 
-  execute(input: CreateProductInput): Promise<Product> {
-    return this.productRepository.create(input);
+  execute(input: CreateProductInput): Promise<CreateProductOutput> {
+    return this.productRepository.create(ProductDetails.create(input));
   }
 }

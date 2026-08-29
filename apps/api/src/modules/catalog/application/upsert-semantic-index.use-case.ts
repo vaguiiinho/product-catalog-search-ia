@@ -1,12 +1,19 @@
-import { Injectable } from "@nestjs/common";
-import { SemanticIndexService } from "../infrastructure/semantic-index.service";
-import { UpsertSemanticIndexInput } from "../presentation/dto/upsert-semantic-index.dto";
+import { Inject, Injectable } from "@nestjs/common";
+import {
+  SEMANTIC_INDEX,
+  SemanticIndexPort,
+  UpsertSemanticIndexInput,
+  UpsertSemanticIndexOutput,
+} from "./ports/semantic-index.port";
 
 @Injectable()
 export class UpsertSemanticIndexUseCase {
-  constructor(private readonly semanticIndexService: SemanticIndexService) {}
+  constructor(
+    @Inject(SEMANTIC_INDEX)
+    private readonly semanticIndex: SemanticIndexPort,
+  ) {}
 
-  execute(input: UpsertSemanticIndexInput) {
-    return this.semanticIndexService.upsertDocuments(input.documents);
+  execute(input: UpsertSemanticIndexInput): Promise<UpsertSemanticIndexOutput> {
+    return this.semanticIndex.upsertDocuments(input.documents);
   }
 }

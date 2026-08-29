@@ -1,7 +1,7 @@
 import { ChatGroq } from "@langchain/groq";
 
 export const GROQ_CHAT_MODEL = Symbol("GROQ_CHAT_MODEL");
-export const GROQ_MODEL = "llama-3.3-70b-versatile";
+export const DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b";
 
 export type ChatModelLike = {
   invoke(
@@ -19,7 +19,11 @@ export function createGroqChatModel(): ChatModelLike | null {
 
   return new ChatGroq({
     apiKey,
-    model: GROQ_MODEL,
+    model: getGroqModel(),
     temperature: 0.2,
   }) as unknown as ChatModelLike;
+}
+
+export function getGroqModel() {
+  return process.env.GROQ_MODEL?.trim() || DEFAULT_GROQ_MODEL;
 }

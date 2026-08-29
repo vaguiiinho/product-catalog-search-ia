@@ -72,7 +72,7 @@ Construir um catalogo de produtos com:
 - `LlamaIndex` apenas se uma futura parte Python exigir um fluxo separado.
 
 No MVP, o worker gera embeddings deterministicos e persiste os vetores em `pgvector`, enquanto a camada de orquestracao de `LLM` e `RAG` fica prevista para `LangChain` + `Groq` sobre a base existente. A demo pode continuar sem depender de provedor externo real ate essa integracao ser ativada.
-Na API, a implementacao usa um agent fino: ele recupera contexto, aciona tool calling quando necessario e compoe a resposta, sem assumir ingestao ou persistencia.
+Na API, a implementacao usa um assistente fino: ele recupera o contexto antes da chamada e compoe uma resposta estruturada, sem assumir ingestao ou persistencia.
 
 ## Topologia do repositorio
 
@@ -94,7 +94,7 @@ O projeto usa agentes especializados para manter a arquitetura e a documentacao 
 - `nestjs-backend` implementa API, Prisma e testes;
 - `nextjs-frontend` implementa interface e interacoes no Next.js;
 - `ingestion-worker` trata ingestao, jobs e reindexacao;
-- `ai-rag` trata recuperacao semantica, prompts, tool calling e orquestracao com Groq;
+- `ai-rag` trata recuperacao semantica, prompts e resposta estruturada com Groq;
 - `data-vector-store` trata schema, indices e vetores;
 - `documentation` produz PRD, ADRs e checklist.
 

@@ -67,9 +67,9 @@ Legenda:
 
 - [x] integrar `LangChain` no runtime da API;
 - [x] conectar `Groq` como provedor de LLM;
-- [x] definir modelo padrao (`llama-3.3-70b-versatile`) e fallback (`llama-3.1-8b-instant`);
+- [x] definir modelo padrao acessivel (`openai/gpt-oss-20b`) e permitir sobrescrita por `GROQ_MODEL`;
 - [x] expor uma rota de resposta assistida baseada em contexto do catalogo;
-- [x] validar tool calling ou structured output, se a demo pedir;
+- [x] validar resposta estruturada com retrieval executado antes da chamada ao modelo;
 - [ ] revisar o roteiro da apresentacao com a camada de RAG em runtime.
 
 ## Fase 8 - Experiencia RAG no Frontend
@@ -84,6 +84,17 @@ Legenda:
 
 - [x] formalizar o agent fino na API;
 - [x] manter ingestao e persistencia no worker;
-- [x] restringir o agent a retrieval, tool calling e resposta final;
+- [x] restringir o assistente a retrieval e resposta estruturada;
 - [x] manter o nome publico como "assistente" no frontend;
 - [x] validar se a documentacao final evita chamar esse fluxo de agent autonomo.
+
+## Fase 10 - Robustez do dominio e persistencia
+
+- [x] validar entidades por fabricas e objetos de valor;
+- [x] padronizar IDs do catalogo como UUID v4;
+- [x] explicitar entradas e saidas dos casos de uso;
+- [x] desacoplar casos de uso de infraestrutura e apresentacao;
+- [x] testar entidades e casos de uso de forma unitaria;
+- [x] testar repositorios Prisma com PostgreSQL/pgvector em Testcontainers;
+- [x] converter erros de dominio em respostas HTTP 400;
+- [x] validar execucao local e compatibilidade com Docker Compose.
