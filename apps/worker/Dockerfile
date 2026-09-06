@@ -14,12 +14,14 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/worker/node_modules ./apps/worker/node_modules
 COPY . .
 RUN corepack pnpm --dir apps/worker build
+RUN corepack pnpm --filter @pcs/worker deploy --prod /prod/worker
 
-FROM base AS runtime
+FROM node:22-alpine AS runtime
 WORKDIR /app/apps/worker
 ENV NODE_ENV=production
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/apps/worker/package.json ./package.json
-COPY --from=build /app/apps/worker/dist ./dist
+COPY --chown=node:node --from=build /prod/worker/node_modules ./node_modules
+COPY --chown=node:node --from=build /app/apps/worker/package.json ./package.json
+COPY --chown=node:node --from=build /app/apps/worker/dist ./dist
+USER node
 EXPOSE 3002
 CMD ["node", "dist/main.js"]

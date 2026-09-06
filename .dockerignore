@@ -1,4 +1,7 @@
 .git
+.github
+.agents
+.codex
 docs
 node_modules
 **/node_modules
@@ -16,3 +19,8 @@ coverage
 *.tsbuildinfo
 README.md
 c4-diagram.puml
+AGENTS.md
+**/test
+**/*.spec.ts
+tmp
+temp

@@ -16,14 +16,14 @@ COPY . .
 WORKDIR /app/apps/web
 RUN NEXT_BIN="$(find /app/node_modules -path '*/next/dist/bin/next' -print -quit)" && node "$NEXT_BIN" build
 
-FROM base AS runtime
-WORKDIR /app/apps/web
+FROM node:22-alpine AS runtime
+WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/apps/web/node_modules /app/apps/web/node_modules
-COPY --from=build /app/apps/web/package.json ./package.json
-COPY --from=build /app/apps/web/.next ./.next
-COPY --from=build /app/apps/web/next.config.mjs ./next.config.mjs
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
+COPY --from=build /app/apps/web/.next/standalone ./
+COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build /app/apps/web/healthcheck.js ./healthcheck.js
+USER node
 EXPOSE 3000
-CMD ["sh", "-c", "NEXT_BIN=$(find /app/node_modules -path '*/next/dist/bin/next' -print -quit) && node \"$NEXT_BIN\" start --hostname 0.0.0.0"]
+CMD ["node", "apps/web/server.js"]
